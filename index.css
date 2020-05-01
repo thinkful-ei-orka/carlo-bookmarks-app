@@ -1,0 +1,188 @@
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    min-width: 300px;
+}
+
+/*   
+-------------------
+Main View Styles
+-------------------
+*/
+
+.upper-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+    height: 15vw;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 4px;
+    border: 1px solid black;
+    overflow: visible;
+}
+
+.new-button {
+    width: 47%;
+}
+
+.filter-menu {
+    width: 47%;
+}
+
+.lower-container {
+    height: 110vw;
+    width: 80%;
+    border: 1px solid black;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.bookmark-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+    padding: 5px;
+}
+
+.title-box {
+    
+}
+
+.star-box {
+
+}
+
+.info-inner-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.info-inner-url-container {
+    width: 80%;
+    padding: 10px;
+}
+.info-url-button {
+    width: 90%;
+    height: 15vw;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.info-inner-rating {
+    width: 20%;
+}
+
+.info-inner-bottom {
+    height: 30vw;
+    padding: 5px;
+    overflow: scroll;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+/*   
+-------------------
+Add Container Styles
+-------------------
+*/
+.add-upper-container {
+    width: 80%;
+    height: 15vw;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: visible;
+}
+
+.js-add-input {
+    width: 100%;
+    height: 10vw;
+}
+
+.add-lower-container {
+    height: 100vw;
+    width: 80%;
+    border: 1px solid black;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.add-inner-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 12vw;
+    padding: 5px;
+    border-bottom: 1px solid black;
+}
+
+.add-inner-link {
+    width: 70%;
+    text-align: center;
+    vertical-align: middle;
+    font-size: large;
+    padding-top: 2px;
+}
+
+.add-inner-edit {
+    width: 20%;
+    text-align: center;
+    vertical-align: middle;
+    font-size: large;
+    padding-top: 2px;
+}
+
+.add-inner-bottom {
+    margin: 15px;
+    margin-top: 10px;
+    height: 80%;
+}
+
+.add-inner-rating {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    height: 12vw;
+    border: 1px solid black;
+}
+
+.star {
+    text-align: center;
+    width: 10%;
+    padding-top: 8px;
+}
+
+textarea {
+    width: 100%;
+    height: 67vw;
+    font-size: small;
+}
+
+.add-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+    height: 12vw;
+}
+
+.cancel-button {
+    width: 47%;
+}
+
+.create-button {
+    width: 47%;
+}
+
+
