@@ -1,23 +1,22 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
-import 'normalize.css';
-import './index.css';
+// import 'normalize.css';
+// import './index.css';
 
-import store from './store';
-import api from './api';
-import bookmarks from './bookmarks';
+// import store from './store.js';
+import api from './api.js';
+// import bookmarks from './bookmarks.js';
 
 const main = function () {
   api.getItems()
     .then(res => res.json())
     .then((items) => {
-    items.forEach((item) => store.addItem(item));
-    shoppingList.render();
+    console.log(items)
   }).catch(err => console.error(err.message));
 
 
-  bookmarks.bindEventListeners();
-  bookmarks.render();
+  // bookmarks.bindEventListeners();
+  // bookmarks.render();
 };
 
 $(main);

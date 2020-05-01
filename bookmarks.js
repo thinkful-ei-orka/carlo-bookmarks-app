@@ -1,7 +1,7 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
-import api from './api';
-import store from './store';
+import api from './api.js';
+import store from './store.js';
 
 
 
