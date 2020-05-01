@@ -16,12 +16,15 @@ function generateMainPage(bookmark) {
     let bookmarkStructure = "";
 
     bookmark.forEach(item => {
-
+        bookmarkStructure += `
+        <div class="bookmark-container">
+            <div class="title-box">${item.title}</div>
+            <div class="star-box">Stars</div>
+        </div>
+        <div class="info-container" data-item-id="${item.id}">
+        </div>
+        `;
     });
-
-    let bookmarkStructure = `
-    
-    `;
 
 
     let mainStructure = `
@@ -39,12 +42,7 @@ function generateMainPage(bookmark) {
             </select>
         </div>
         <div class="lower-container">
-            <div class="bookmark-container">
-                <div class="title-box">${bookmark[0].title}</div>
-                <div class="star-box">Stars</div>
-            </div>
-            <div class="info-container" data-item-id="1">
-            </div>
+            ${bookmarkStructure}
         </div>
     </div>`;
 
@@ -109,7 +107,14 @@ function renderPage() {
 //-----------------------
 
 function getInnerContainerId (target) {
-    // return $(target).closest('.lower-container').find('.info-container')
+    return $(target)
+        .closest('.lower-container')
+        .find('.info-container')
+        .data('item-id');
+}
+
+function handleBookmarkClicked () {
+    $('.')
 }
 
 

@@ -8,6 +8,10 @@ function addBookmark (item) {
     this.bookmarks.push(item);
 }
 
+function addExpanded (item) {
+    
+}
+
 
 
 
