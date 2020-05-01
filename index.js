@@ -13,11 +13,12 @@ const main = function () {
     .then((items) => {
     items.forEach((item) => store.addBookmark(item));
     console.log(store.bookmarks)
+    
     bookmarks.renderPage();
   });
 
   bookmarks.bindEventListeners();
-  bookmarks.renderPage();
+  //bookmarks.renderPage();
 };
 
 $(main);

@@ -17,11 +17,15 @@ function addBookmark (item) {
     this.bookmarks.push(item);
 }
 
-const findAndUpdate = function (id, newData) {
+function findAndUpdate (id, newData) {
     let newItem = this.findById(id);
   
     Object.assign(newItem, newData);
 }
+
+function findAndDelete (id) {
+    this.bookmarks = this.bookmarks.filter(currentItem => currentItem.id !== id);
+};
 
 
 export default {
@@ -31,5 +35,6 @@ export default {
     filter,
     addBookmark,
     findById,
-    findAndUpdate
+    findAndUpdate,
+    findAndDelete
 }

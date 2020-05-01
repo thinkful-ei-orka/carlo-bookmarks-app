@@ -14,8 +14,8 @@ function generateMainPage(bookmark) {
     // and adds them in loops to the lower-container
     
     let bookmarkStructure = "";
-    let description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla, sapien sed fringilla maximus, ipsum mi tristique velit, mollis tempor nisl orci nec metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut fringilla, sapien sed fringilla maximus, ipsum mi tristique velit, mollis tempor nisl orci nec metus.";
-    let rating = "5";
+    let description = "No description provided.";
+    let rating = "No Rating";
 
     bookmark.forEach(item => {
         if(item.desc !== null) {
@@ -31,7 +31,7 @@ function generateMainPage(bookmark) {
             <div class="combo-container">
                 <div class="bookmark-container">
                     <div class="title-box">${item.title}</div>
-                    <div class="star-box">Stars</div>
+                    <div class="star-box">${rating}</div>
                 </div>
                 <div class="info-container" data-item-id="${item.id}">
                     <div class="info-inner-top">
@@ -66,42 +66,8 @@ function generateMainPage(bookmark) {
 
     });
 
-    let mainStructure = ""
 
-    if(store.adding) {
-        mainStructure = `
-        <div class="main-container">
-            <form class="add-form">
-                <div class="add-upper-container">
-                        <label for="add-input">Add New Bookmark:</label>
-                        <input type="text" name="add-input" class="js-add-input">
-                </div>
-                <div class="add-lower-container">
-                <div class="add-inner-top">
-                    <div class="add-inner-link">Link Walkthrough</div>
-                    <div class="add-inner-edit">E</div>
-                </div>
-                <div class="add-inner-bottom">
-                    <div class="add-inner-rating">
-                        <div class="star star-one">S</div>
-                        <div class="star star-two">S</div>
-                        <div class="star star-three">S</div>
-                        <div class="star star-four">S</div>
-                        <div class="star star-five">S</div>
-                    </div>
-                    <textarea class="add-inner-description">Add a description (optional)
-                    </textarea>
-                </div>
-                </div>
-                <div class="add-button-container">
-                    <button class="cancel-button">Cancel</button>
-                    <button class="create-button">Create</button>
-                </div>
-            </form>
-        </div>
-        `;
-    } else {
-        mainStructure = `
+    let mainStructure = `
         <div class="main-container">
             <div class="upper-container">
                 <button class="new-button">+ New</button>
@@ -118,8 +84,7 @@ function generateMainPage(bookmark) {
             <div class="lower-container">
                 ${bookmarkStructure}
             </div>
-        </div>`;
-    }
+        </div>`
 
 
     return mainStructure;
@@ -146,10 +111,45 @@ function generateMainPage(bookmark) {
 //     return expandStructure;
 // }
 
-// // Create Bookmark HTML
-// function generateCreateBookmark(bookmark) {
+// Create Bookmark HTML
+function generateCreateBookmark(bookmark) {
+    let createStructure = `
+    <div class="main-container">
+        <form class="add-form">
+            <div class="add-upper-container">
+                    <label for="add-input">Add New Bookmark:</label>
+                    <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com">
+            </div>
+            <div class="add-lower-container">
+            <div class="add-inner-top">
+                <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here">
+            </div>
+            <div class="add-inner-bottom">
+                <div class="add-inner-rating">
+                    <input type="radio" name="rating" class="js-add-rating" id="rating1" value="1">
+                    <label class="star" for="rating">1</label>
+                    <input type="radio" name="rating" class="js-add-rating" id="rating2" value="2">
+                    <label class="star" for="rating">2</label>
+                    <input type="radio" name="rating" class="js-add-rating" id="rating3" value="3">
+                    <label class="star" for="rating">3</label>
+                    <input type="radio" name="rating" class="js-add-rating" id="rating4" value="4">
+                    <label class="star" for="rating">4</label>
+                    <input type="radio" name="rating" class="js-add-rating" id="rating5" value="5">
+                    <label class="star" for="rating">5</label>
+                </div>
+                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)"></textarea>
+            </div>
+            </div>
+            <div class="add-button-container">
+                <button class="cancel-button">Cancel</button>
+                <button type="submit" class="create-button">Create</button>
+            </div>
+        </form>
+    </div>
+    `;
 
-// }
+    return createStructure;
+}
 
 //-----------------------
 // Render Functions
@@ -158,14 +158,15 @@ function generateMainPage(bookmark) {
 
 function generatePageString(data) {
     // Handle which page to load
-    // if(store.adding) {
-
-    // } else {
-
-    // }
+    let pageString = "";
+    if(store.adding) {
+        pageString = generateCreateBookmark(data);
+    } else {
+        pageString = generateMainPage(data);
+    }
 
     console.log(`Ran generatePageString`);
-    let pageString = generateMainPage(data);
+    
 
     return pageString;
 
@@ -203,9 +204,73 @@ function handleBookmarkClicked () {
     });
 }
 
+function handleNewButtonClicked () {
+    $('main').on('click', '.new-button', event => {
+        console.log(`ran handleNewButtonClicked`);
+        store.adding = true;
+        renderPage();
+    });
+}
+
+function handleCancelButtonClicked() {
+    $('main').on('click', '.cancel-button', event => {
+        console.log(`ran handleNewButtonClicked`);
+        store.adding = false;
+        renderPage();
+    });
+}
+
+function handleCreateButtonClicked() {
+    $('main').on('submit', '.add-form', event => {
+        event.preventDefault();
+        console.log(`ran handleCreateButtonClicked`);
+        const itemRating = $('input[name="rating"]:checked').val();
+        const itemDescription = $('.js-add-inner-description').val();
+        const itemUrl = $('.js-add-input').val();
+        const itemTitle = $('.js-add-inner-title').val();
+
+        // const bookmarkObject = {
+        //     'title': itemTitle,
+        //     'url': itemUrl,
+        //     'desc': itemDescription,
+        //     'rating': itemRating
+        // };
+
+        // Add Post below
+        api.createItem(itemTitle, itemUrl, itemDescription, itemRating)
+            .then(res => res.json())
+            .then((response) => {
+                console.log(response);
+                store.adding = false;
+                store.addBookmark(response);
+                renderPage();
+            }).catch(err => console.error(err.message));
+
+        
+
+    });
+}
+
+function handleDeleteButtonClicked() {
+    $('main').on('click', '.info-trash-button', event => {
+        const id = getInnerContainerId(event.currentTarget);
+
+        api.deleteItem(id) 
+            .then(res => res.json())
+            .then(() => {
+          
+                store.findAndDelete(id);
+                renderPage();
+            }).catch(err => console.error(err.message));
+    });
+}
 
 
 function bindEventListeners () {
+    handleDeleteButtonClicked();
+    handleCreateButtonClicked();
+    handleCancelButtonClicked();
+    handleNewButtonClicked();
     handleBookmarkClicked();
 }
 
