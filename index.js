@@ -16,7 +16,7 @@ const main = function () {
     bookmarks.renderPage();
   });
 
-  // bookmarks.bindEventListeners();
+  bookmarks.bindEventListeners();
   bookmarks.renderPage();
 };
 
