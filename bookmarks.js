@@ -7,29 +7,43 @@ import store from './store.js';
 // Page Structure Functions
 //-----------------------
 
-// Main Page HTML
+// Main Page HTML 
+// Everything that has to do with the main page, including Filter and Expanded views.
 function generateMainPage(bookmark) {
     // Add HTML that loops through bookmarks and creates 
     // the bookmark container with title and rating
-    // and adds them in loops to the lower-container
+    // and adds them in a loop to the lower-container
     
+    // Initializations of the bookmark HTML structure and associated variable strings
     let bookmarkStructure = "";
-    let description = "No description provided.";
+    let description = "";
     let filteredBookmarks = [];
 
+    // Checks value of filter dropdown menu and filters all bookmarks in store according to current filter rating
+    // If filter is 0 (no rating), show all bookmarks on page
     if(store.filter !== 0) {
         filteredBookmarks = bookmark.filter(item => item.rating >= store.filter);
     } else {
         filteredBookmarks = bookmark;
     }
     
-
+    // Iterates through each bookmark to create HTML
     filteredBookmarks.forEach(item => {
+
+        // Default rating
         let rating = "No Rating";
+
+        // Check if description is not empty. 
+        // If so, make description equal to the bookmark's description from API
+        // If not, put default string.
         if(item.desc !== null) {
             description = item.desc;
+        } else {
+            description = "No description provided.";
         }
 
+        // Check if rating is not equal to anything. 
+        // If it is, make rating equal to rating of current bookmark
         if(item.rating !== null) {
             rating = item.rating;
         }
@@ -44,7 +58,7 @@ function generateMainPage(bookmark) {
                 <div class="info-container" data-item-id="${item.id}">
                     <div class="info-inner-top">
                         <div class="info-inner-url-container">
-                            <button class="info-url-button">Visit Site</button>
+                            <button onclick="window.location.href = '${item.url}';" class="info-url-button">Visit Site</button>
                         </div>
                         <div class="info-inner-controls">
                             <button class="info-edit-button">Edit</button>
@@ -81,11 +95,11 @@ function generateMainPage(bookmark) {
                 <button class="new-button">+ New</button>
                 <select name="filter-menu" class="js-filter-menu">
                     <option disabled selected>Filter By:</option>
-                    <option value="1">One Star</option>
-                    <option value="2">Two Stars</option>
-                    <option value="3">Three Stars</option>
-                    <option value="4">Four Stars</option>
-                    <option value="5">Five Stars</option>
+                    <option value="1">1+ Stars</option>
+                    <option value="2">2+ Stars</option>
+                    <option value="3">3+ Stars</option>
+                    <option value="4">4+ Stars</option>
+                    <option value="5">5+ Stars</option>
                     <option value="0">No Rating</option>
                 </select>
             </div>
@@ -98,27 +112,6 @@ function generateMainPage(bookmark) {
     return mainStructure;
 }
 
-// Expand HTML
-// function generateExpand(bookmark) {
-
-//     let expandStructure = `
-//     <div class="info-inner-top">
-//         <div class="info-inner-url-container">
-//             <button class="info-url-button">Visit Site</button>
-//         </div>
-//         <div class="info-inner-rating">Stars</div>
-//     </div>
-//     <div class="info-inner-bottom">
-//         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut 
-//         fringilla, sapien sed fringilla maximus, ipsum mi tristique 
-//         velit, mollis tempor nisl orci nec metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut 
-//         fringilla, sapien sed fringilla maximus, ipsum mi tristique 
-//         velit, mollis tempor nisl orci nec metus. 
-//     </div>`;
-
-//     return expandStructure;
-// }
-
 // Create Bookmark HTML
 function generateCreateOrEditBookmark(bookmark) {
     let titleString = "";
@@ -128,10 +121,9 @@ function generateCreateOrEditBookmark(bookmark) {
         <button type="submit" class="create-button">Create</button>
     `;
     let formString = '<form class="add-form">';
+    let rating = -1;
 
     if(store.edit) {
-        let rating = bookmark.rating;
-
         titleString = `value="${bookmark.title}"`;
         urlString = `value="${bookmark.url}"`
         descriptionString = bookmark.desc;
@@ -139,19 +131,23 @@ function generateCreateOrEditBookmark(bookmark) {
             <button type="submit" class="js-edit-button">Edit</button>
         `;
         formString = '<form class="edit-form">';
-
-
-
+        rating = bookmark.rating;
     } 
 
     let ratingString = "";
 
+
     // Create rating HTML. Iterate until i = rating, in which case, add checked
     for(let i = 1; i <= 5; i++) {
-        ratingString += `<input type="radio" name="rating" class="js-add-rating" id="rating${i}" value="${i}">
+        let checked = "";
+        if(i === Number(rating) && store.edit) {
+            console.log(`checked condition met at ${i}`);
+            checked = "checked";
+        }
+
+        ratingString += `<input type="radio" name="rating" class="js-add-rating" id="rating${i}" value="${i}" ${checked}>
         <label class="star" for="rating">${i}</label>`
     }
-
 
     let createStructure = `
     <div class="main-container">
@@ -166,9 +162,9 @@ function generateCreateOrEditBookmark(bookmark) {
             </div>
             <div class="add-inner-bottom">
                 <div class="add-inner-rating">
-                    ${ratingString} 
+                ${ratingString} 
                 </div>
-                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)"> ${descriptionString} </textarea>
+                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)">${descriptionString}</textarea>
             </div>
             </div>
             <div class="js-error-message hidden">ERROR: ${store.errorMessage} </div>
@@ -266,9 +262,13 @@ function handleCreateButtonClicked() {
         event.preventDefault();
         console.log(`ran handleCreateButtonClicked`);
         const itemRating = $('input[name="rating"]:checked').val();
-        const itemDescription = $('.js-add-inner-description').val();
+        let itemDescription = $('.js-add-inner-description').val();
         const itemUrl = $('.js-add-input').val();
         const itemTitle = $('.js-add-inner-title').val();
+
+        if(itemDescription === "") {
+            itemDescription = null;
+        }
 
         // const bookmarkObject = {
         //     'title': itemTitle,
@@ -338,7 +338,6 @@ function handleEditButtonClicked() {
         store.adding = true;
         const id = getInnerContainerId(event.currentTarget);
         store.tempId = id;
-        console.log(store.tempId);
         renderPage();
     });
 }
@@ -347,12 +346,6 @@ function handleEditButtonSubmit() {
     $('main').on('submit', '.edit-form', event => {
         event.preventDefault();
         console.log(`Submission on Edit Button Ran`);
-        console.log(`-------------------------`);
-        let targetBookmark = store.findById(store.tempId);
-        console.log(targetBookmark);
-        console.log(targetBookmark.rating);
-        console.log(`-------------------------`);
-        $(document).find(`#rating${targetBookmark.rating}`).attr('checked', 'checked');
 
         
 
