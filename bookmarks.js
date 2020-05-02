@@ -16,8 +16,16 @@ function generateMainPage(bookmark) {
     let bookmarkStructure = "";
     let description = "No description provided.";
     let rating = "No Rating";
+    let filteredBookmarks = [];
 
-    bookmark.forEach(item => {
+    if(store.filter !== 0) {
+        filteredBookmarks = bookmark.filter(item => item.rating === store.filter);
+    } else {
+        filteredBookmarks = bookmark;
+    }
+    
+
+    filteredBookmarks.forEach(item => {
         if(item.desc !== null) {
             description = item.desc;
         }
@@ -73,12 +81,12 @@ function generateMainPage(bookmark) {
                 <button class="new-button">+ New</button>
                 <select name="filter-menu" class="js-filter-menu">
                     <option disabled selected>Filter By:</option>
-                    <option value="one">One Star</option>
-                    <option value="two">Two Stars</option>
-                    <option value="three">Three Stars</option>
-                    <option value="four">Four Stars</option>
-                    <option value="five">Five Stars</option>
-                    <option value="no-filter">No Filter</option>
+                    <option value="1">One Star</option>
+                    <option value="2">Two Stars</option>
+                    <option value="3">Three Stars</option>
+                    <option value="4">Four Stars</option>
+                    <option value="5">Five Stars</option>
+                    <option value="0">No Filter</option>
                 </select>
             </div>
             <div class="lower-container">
@@ -265,8 +273,18 @@ function handleDeleteButtonClicked() {
     });
 }
 
+function handleFilterSelection() {
+    $('main').on('change', '.js-filter-menu', event => {
+        const rating = $(".js-filter-menu option:selected").val();
+
+        console.log(rating);
+        store.filter = Number(rating);
+        renderPage();
+    });
+}
 
 function bindEventListeners () {
+    handleFilterSelection();
     handleDeleteButtonClicked();
     handleCreateButtonClicked();
     handleCancelButtonClicked();

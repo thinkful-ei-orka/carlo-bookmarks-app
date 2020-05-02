@@ -7,6 +7,14 @@ function findById(id) {
     return this.bookmarks.find(currentItem => currentItem.id === id);
 };
 
+// function filterByRating(rating) {
+//     console.log(`ran filterByRating`);
+//     const 
+//     if(rating >= 1 && rating <= 5) {
+//         this.bookmarks = this.bookmarks.filter(currentItem => currentItem.rating === Number(rating));
+//     }  
+// }
+
 function addBookmark (item) {
     // Add expanded key-value pair
     let expandedObject = {
