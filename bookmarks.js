@@ -120,7 +120,7 @@ function generateMainPage(bookmark) {
 // }
 
 // Create Bookmark HTML
-function generateCreateBookmark(bookmark) {
+function generateCreateOrEditBookmark(bookmark) {
     let titleString = "";
     let urlString = "";
     let descriptionString = "";
@@ -132,7 +132,7 @@ function generateCreateBookmark(bookmark) {
     if(store.edit) {
         titleString = `value="${bookmark.title}"`;
         urlString = `value="${bookmark.url}"`
-        descriptionString = `value="${bookmark.desc}"`
+        descriptionString = bookmark.desc;
         editHtmlString = `
             <button type="submit" class="create-button hidden">Create</button>
             <button type="submit" class="js-edit-button">Edit</button>
@@ -163,7 +163,7 @@ function generateCreateBookmark(bookmark) {
                     <input type="radio" name="rating" class="js-add-rating" id="rating5" value="5">
                     <label class="star" for="rating">5</label>
                 </div>
-                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)" ${descriptionString}></textarea>
+                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)"> ${descriptionString} </textarea>
             </div>
             </div>
             <div class="js-error-message hidden">ERROR: ${store.errorMessage} </div>
@@ -187,7 +187,8 @@ function generatePageString(data) {
     // Handle which page to load
     let pageString = "";
     if(store.adding) {
-        pageString = generateCreateBookmark(data);
+        let bookmark = store.findById(store.tempId); // Get single target bookmark and pass it to create/edit page
+        pageString = generateCreateOrEditBookmark(bookmark);
     } else {
         pageString = generateMainPage(data);
     }
@@ -241,6 +242,7 @@ function handleNewButtonClicked () {
     $('main').on('click', '.new-button', event => {
         console.log(`ran handleNewButtonClicked`);
         store.adding = true;
+        store.edit = false;
         renderPage();
     });
 }
@@ -249,6 +251,7 @@ function handleCancelButtonClicked() {
     $('main').on('click', '.cancel-button', event => {
         console.log(`ran handleNewButtonClicked`);
         store.adding = false;
+        store.edit = false;
         renderPage();
     });
 }
@@ -337,17 +340,7 @@ function handleEditButtonClicked() {
 function handleEditButtonSubmit() {
     $('main').on('submit', '.js-edit-button', event => {
         event.preventDefault();
-
-        const id = store.temp;
-        const bookmark = store.findById(id);
-        const rating = bookmark.rating;
-
-        console.log(bookmark);
-
-        // const itemRating = $('input[name="rating"]:checked').val();
-        // const itemDescription = $('.js-add-inner-description').val();
-        // const itemUrl = $('.js-add-input').val();
-        // const itemTitle = $('.js-add-inner-title').val();
+        
     });
 }
 
