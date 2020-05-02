@@ -14,9 +14,10 @@ function generateMainPage(bookmark) {
     // the bookmark container with title and rating
     // and adds them in a loop to the lower-container
     
-    // Initializations of the bookmark HTML structure and associated variable strings
+    // Initializations of the bookmark HTML structure and associated variable strings/dummy array
     let bookmarkStructure = "";
     let description = "";
+    let rating = "";
     let filteredBookmarks = [];
 
     // Checks value of filter dropdown menu and filters all bookmarks in store according to current filter rating
@@ -30,9 +31,6 @@ function generateMainPage(bookmark) {
     // Iterates through each bookmark to create HTML
     filteredBookmarks.forEach(item => {
 
-        // Default rating
-        let rating = "No Rating";
-
         // Check if description is not empty. 
         // If so, make description equal to the bookmark's description from API
         // If not, put default string.
@@ -44,10 +42,15 @@ function generateMainPage(bookmark) {
 
         // Check if rating is not equal to anything. 
         // If it is, make rating equal to rating of current bookmark
+        // If it is not, default to "No Rating" value
         if(item.rating !== null) {
             rating = item.rating;
+        } else {
+            rating = "No Rating";
         }
 
+        // Check if item needs to be expanded. 
+        // If so, add expanded HTML to the final bookmark structure
         if(item.expanded) {
             bookmarkStructure += `
             <div class="combo-container">
@@ -88,7 +91,8 @@ function generateMainPage(bookmark) {
 
     });
 
-
+    // Default structure on main page 
+    // Adding resulting bookmark structure from filter/expansion
     let mainStructure = `
         <div class="main-container">
             <div class="upper-container">
@@ -292,7 +296,7 @@ function handleCreateButtonClicked() {
                 // show specified errors.
                 if(itemTitle === "" || itemUrl === "") {
                     store.errorMessage = "Title and URL are required fields.";
-                } else if(regexp.test(itemUrl)) {
+                } else if(!regexp.test(itemUrl)) {
                     store.errorMessage = "URL Must begin with 'https://";
                 } else {
                     store.errorMessage = res.statusText;
