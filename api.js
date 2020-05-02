@@ -1,7 +1,7 @@
 export default {
     getItems,
     createItem,
-    // updateItem,
+    updateItem,
     deleteItem
 };
 
@@ -29,16 +29,16 @@ function createItem(title, url, desc, rating) {
     });
 }
 
-// function updateItem(id, updateData) {
-//     let newUrl = `${BASE_URL}/items/${id}`;
-//     let newItem = JSON.stringify(updateData);
+function updateItem(id, updateData) {
+    let newUrl = `${BASE_URL}/${id}`;
+    let newItem = JSON.stringify(updateData);
 
-//     return fetch(newUrl, {
-//         method: 'PATCH',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: newItem
-//     });
-// }
+    return fetch(newUrl, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: newItem
+    });
+}
 
 function deleteItem(id) {
     let newUrl = `${BASE_URL}/${id}`;

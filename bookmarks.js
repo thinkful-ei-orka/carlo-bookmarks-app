@@ -126,22 +126,22 @@ function generateCreateOrEditBookmark(bookmark) {
     let descriptionString = "";
     let editHtmlString = `
         <button type="submit" class="create-button">Create</button>
-        <button type="submit" class="js-edit-button hidden">Edit</button>
     `;
+    let formString = '<form class="add-form">';
 
     if(store.edit) {
         titleString = `value="${bookmark.title}"`;
         urlString = `value="${bookmark.url}"`
         descriptionString = bookmark.desc;
         editHtmlString = `
-            <button type="submit" class="create-button hidden">Create</button>
             <button type="submit" class="js-edit-button">Edit</button>
         `;
+        formString = '<form class="edit-form">';
     } 
 
     let createStructure = `
     <div class="main-container">
-        <form class="add-form">
+        ${formString}
             <div class="add-upper-container">
                     <label for="add-input">Add New Bookmark:</label>
                     <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com" ${urlString}>
@@ -169,7 +169,7 @@ function generateCreateOrEditBookmark(bookmark) {
             <div class="js-error-message hidden">ERROR: ${store.errorMessage} </div>
             <div class="add-button-container">
                 <button class="cancel-button">Cancel</button>
-                ${editHtmlString};
+                ${editHtmlString}
             </div>
         </form>
     </div>
@@ -230,7 +230,7 @@ function handleBookmarkClicked () {
         const id = getInnerContainerId(event.currentTarget);
         console.log(`handleBookmarkClicked ran`);
         const item = store.findById(id);
-        console.log(item.expanded);
+        console.log(item);
         const itemObj = { expanded: !item.expanded };
 
         store.findAndUpdate(id, itemObj);
@@ -328,19 +328,75 @@ function handleDeleteButtonClicked() {
 
 function handleEditButtonClicked() {
     $('main').on('click', '.info-edit-button', event => {
-        console.log(`ran handleEditButonClicked`);
+        console.log(`ran handleEditButtonClicked`);
         store.edit = true;
         store.adding = true;
         const id = getInnerContainerId(event.currentTarget);
         store.tempId = id;
+        console.log(store.tempId);
         renderPage();
     });
 }
 
 function handleEditButtonSubmit() {
-    $('main').on('submit', '.js-edit-button', event => {
+    $('main').on('submit', '.edit-form', event => {
         event.preventDefault();
-        
+
+        console.log(`Submission on Edit Button Ran`);
+
+        const itemRating = $('input[name="rating"]:checked').val();
+        const itemDescription = $('.js-add-inner-description').val();
+        const itemUrl = $('.js-add-input').val();
+        const itemTitle = $('.js-add-inner-title').val();
+        const id = store.tempId;
+
+        const bookmarkObject = {
+            'title': itemTitle,
+            'url': itemUrl,
+            'desc': itemDescription,
+            'rating': itemRating
+        };
+
+        console.log(bookmarkObject);
+
+        api.updateItem(id, bookmarkObject)
+        .then(res => {
+            if (res.ok) { 
+                return res.json();
+            }
+
+            let regexp = /^https:\/\//;
+
+            console.log(regexp.test(itemUrl));
+            // If itemTitle or itemUrl are empty, 
+            // Else if itemUrl is not valid,
+            // show specified errors.
+            if(itemTitle === "" || itemUrl === "") {
+                store.errorMessage = "Title and URL are required fields.";
+            } else if(regexp.test(itemUrl)) {
+                store.errorMessage = "URL Must begin with 'https://";
+            } else {
+                store.errorMessage = res.statusText;
+            }
+            
+
+            store.error = 1;
+            renderPage();
+            throw new Error(store.errorMessage);
+        })
+        .then((response) => {
+            //Find and Update the bookmark with new values in store
+            console.log(response);
+            store.findAndUpdate(id, bookmarkObject);
+
+            // Reset global variables to default state and render page
+            store.error = 0;
+            store.edit = false;
+            store.tempId = 0;
+            store.adding = false;
+            renderPage();
+
+        }).catch(err => console.error(err));
     });
 }
 
