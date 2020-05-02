@@ -15,17 +15,17 @@ function generateMainPage(bookmark) {
     
     let bookmarkStructure = "";
     let description = "No description provided.";
-    let rating = "No Rating";
     let filteredBookmarks = [];
 
     if(store.filter !== 0) {
-        filteredBookmarks = bookmark.filter(item => item.rating === store.filter);
+        filteredBookmarks = bookmark.filter(item => item.rating >= store.filter);
     } else {
         filteredBookmarks = bookmark;
     }
     
 
     filteredBookmarks.forEach(item => {
+        let rating = "No Rating";
         if(item.desc !== null) {
             description = item.desc;
         }
@@ -86,7 +86,7 @@ function generateMainPage(bookmark) {
                     <option value="3">Three Stars</option>
                     <option value="4">Four Stars</option>
                     <option value="5">Five Stars</option>
-                    <option value="0">No Filter</option>
+                    <option value="0">No Rating</option>
                 </select>
             </div>
             <div class="lower-container">
@@ -121,16 +121,34 @@ function generateMainPage(bookmark) {
 
 // Create Bookmark HTML
 function generateCreateBookmark(bookmark) {
+    let titleString = "";
+    let urlString = "";
+    let descriptionString = "";
+    let editHtmlString = `
+        <button type="submit" class="create-button">Create</button>
+        <button type="submit" class="js-edit-button hidden">Edit</button>
+    `;
+
+    if(store.edit) {
+        titleString = `value="${bookmark.title}"`;
+        urlString = `value="${bookmark.url}"`
+        descriptionString = `value="${bookmark.desc}"`
+        editHtmlString = `
+            <button type="submit" class="create-button hidden">Create</button>
+            <button type="submit" class="js-edit-button">Edit</button>
+        `;
+    } 
+
     let createStructure = `
     <div class="main-container">
         <form class="add-form">
             <div class="add-upper-container">
                     <label for="add-input">Add New Bookmark:</label>
-                    <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com">
+                    <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com" ${urlString}>
             </div>
             <div class="add-lower-container">
             <div class="add-inner-top">
-                <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here">
+                <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here" ${titleString}>
             </div>
             <div class="add-inner-bottom">
                 <div class="add-inner-rating">
@@ -145,12 +163,13 @@ function generateCreateBookmark(bookmark) {
                     <input type="radio" name="rating" class="js-add-rating" id="rating5" value="5">
                     <label class="star" for="rating">5</label>
                 </div>
-                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)"></textarea>
+                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)" ${descriptionString}></textarea>
             </div>
             </div>
+            <div class="js-error-message hidden">ERROR: ${store.errorMessage} </div>
             <div class="add-button-container">
                 <button class="cancel-button">Cancel</button>
-                <button type="submit" class="create-button">Create</button>
+                ${editHtmlString};
             </div>
         </form>
     </div>
@@ -186,6 +205,12 @@ function renderPage() {
     const pageString = generatePageString(store.bookmarks);
 
     $('main').html(pageString);
+
+    if(store.error === 1) {
+        $('.js-error-message').removeClass('hidden');
+    } else if(store.error === 0) {
+        $('.js-error-message').addClass('hidden');
+    }
 }
 
 //-----------------------
@@ -246,13 +271,38 @@ function handleCreateButtonClicked() {
 
         // Add Post below
         api.createItem(itemTitle, itemUrl, itemDescription, itemRating)
-            .then(res => res.json())
+            .then(res => {
+                if (res.ok) { 
+                    return res.json();
+                }
+
+                let regexp = /^https:\/\//;
+
+                console.log(regexp.test(itemUrl));
+                // If itemTitle or itemUrl are empty, 
+                // Else if itemUrl is not valid,
+                // show specified errors.
+                if(itemTitle === "" || itemUrl === "") {
+                    store.errorMessage = "Title and URL are required fields.";
+                } else if(regexp.test(itemUrl)) {
+                    store.errorMessage = "URL Must begin with 'https://";
+                } else {
+                    store.errorMessage = res.statusText;
+                }
+                
+
+                store.error = 1;
+                renderPage();
+                throw new Error(store.errorMessage);
+            })
             .then((response) => {
-                console.log(response);
+                store.error = 0;
+
                 store.adding = false;
                 store.addBookmark(response);
                 renderPage();
-            }).catch(err => console.error(err.message));
+
+            }).catch(err => console.error(err));
 
         
 
@@ -273,6 +323,34 @@ function handleDeleteButtonClicked() {
     });
 }
 
+function handleEditButtonClicked() {
+    $('main').on('click', '.info-edit-button', event => {
+        console.log(`ran handleEditButonClicked`);
+        store.edit = true;
+        store.adding = true;
+        const id = getInnerContainerId(event.currentTarget);
+        store.tempId = id;
+        renderPage();
+    });
+}
+
+function handleEditButtonSubmit() {
+    $('main').on('submit', '.js-edit-button', event => {
+        event.preventDefault();
+
+        const id = store.temp;
+        const bookmark = store.findById(id);
+        const rating = bookmark.rating;
+
+        console.log(bookmark);
+
+        // const itemRating = $('input[name="rating"]:checked').val();
+        // const itemDescription = $('.js-add-inner-description').val();
+        // const itemUrl = $('.js-add-input').val();
+        // const itemTitle = $('.js-add-inner-title').val();
+    });
+}
+
 function handleFilterSelection() {
     $('main').on('change', '.js-filter-menu', event => {
         const rating = $(".js-filter-menu option:selected").val();
@@ -284,6 +362,8 @@ function handleFilterSelection() {
 }
 
 function bindEventListeners () {
+    handleEditButtonSubmit();
+    handleEditButtonClicked();
     handleFilterSelection();
     handleDeleteButtonClicked();
     handleCreateButtonClicked();

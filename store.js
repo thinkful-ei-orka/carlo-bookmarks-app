@@ -1,7 +1,10 @@
 const bookmarks = [];
 const adding = false;
-const error = null;
+const error = 0;
+const errorMessage = "";
 const filter = 0;
+const edit = false;
+const tempId = 0; // Stored ID for page state transition
 
 function findById(id) {
     return this.bookmarks.find(currentItem => currentItem.id === id);
@@ -40,7 +43,10 @@ export default {
     bookmarks,
     adding,
     error,
+    errorMessage,
     filter,
+    edit,
+    tempId,
     addBookmark,
     findById,
     findAndUpdate,
