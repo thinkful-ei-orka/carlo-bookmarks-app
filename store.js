@@ -30,10 +30,8 @@ function addBookmark (item) {
 
 function findAndUpdate (id, newData) {
     let newItem = this.findById(id);
-    console.log(newItem);
-    console.log(newData);
+
     Object.assign(newItem, newData);
-    console.log(newItem);
 }
 
 function findAndDelete (id) {

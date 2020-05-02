@@ -130,6 +130,8 @@ function generateCreateOrEditBookmark(bookmark) {
     let formString = '<form class="add-form">';
 
     if(store.edit) {
+        let rating = bookmark.rating;
+
         titleString = `value="${bookmark.title}"`;
         urlString = `value="${bookmark.url}"`
         descriptionString = bookmark.desc;
@@ -137,7 +139,19 @@ function generateCreateOrEditBookmark(bookmark) {
             <button type="submit" class="js-edit-button">Edit</button>
         `;
         formString = '<form class="edit-form">';
+
+
+
     } 
+
+    let ratingString = "";
+
+    // Create rating HTML. Iterate until i = rating, in which case, add checked
+    for(let i = 1; i <= 5; i++) {
+        ratingString += `<input type="radio" name="rating" class="js-add-rating" id="rating${i}" value="${i}">
+        <label class="star" for="rating">${i}</label>`
+    }
+
 
     let createStructure = `
     <div class="main-container">
@@ -152,16 +166,7 @@ function generateCreateOrEditBookmark(bookmark) {
             </div>
             <div class="add-inner-bottom">
                 <div class="add-inner-rating">
-                    <input type="radio" name="rating" class="js-add-rating" id="rating1" value="1">
-                    <label class="star" for="rating">1</label>
-                    <input type="radio" name="rating" class="js-add-rating" id="rating2" value="2">
-                    <label class="star" for="rating">2</label>
-                    <input type="radio" name="rating" class="js-add-rating" id="rating3" value="3">
-                    <label class="star" for="rating">3</label>
-                    <input type="radio" name="rating" class="js-add-rating" id="rating4" value="4">
-                    <label class="star" for="rating">4</label>
-                    <input type="radio" name="rating" class="js-add-rating" id="rating5" value="5">
-                    <label class="star" for="rating">5</label>
+                    ${ratingString} 
                 </div>
                 <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)"> ${descriptionString} </textarea>
             </div>
@@ -341,8 +346,15 @@ function handleEditButtonClicked() {
 function handleEditButtonSubmit() {
     $('main').on('submit', '.edit-form', event => {
         event.preventDefault();
-
         console.log(`Submission on Edit Button Ran`);
+        console.log(`-------------------------`);
+        let targetBookmark = store.findById(store.tempId);
+        console.log(targetBookmark);
+        console.log(targetBookmark.rating);
+        console.log(`-------------------------`);
+        $(document).find(`#rating${targetBookmark.rating}`).attr('checked', 'checked');
+
+        
 
         const itemRating = $('input[name="rating"]:checked').val();
         const itemDescription = $('.js-add-inner-description').val();
@@ -357,7 +369,7 @@ function handleEditButtonSubmit() {
             'rating': itemRating
         };
 
-        console.log(bookmarkObject);
+        
 
         api.updateItem(id, bookmarkObject)
         .then(res => {
