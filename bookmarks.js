@@ -52,7 +52,7 @@ function generateMainPage(bookmark) {
                 ratingHtml += `<div class="star-inner"></div>`
             }
         } else {
-            rating = "No Rating";
+            ratingHtml = `<div class="no-rating-box">No Rating</div>`;
         }
 
         // Check if item needs to be expanded. 
@@ -225,9 +225,6 @@ function generatePageString(data) {
 function renderPage() {
     console.log("Rendering page");
 
-    // Reset error state
-    store.error = 0;
-
     // Initialize HTML to the correct returned HTML from generatePageString
     const pageString = generatePageString(store.bookmarks);
 
@@ -279,6 +276,7 @@ function handleNewButtonClicked () {
 function handleCancelButtonClicked() {
     $('main').on('click', '.cancel-button', event => {
         console.log(`ran handleNewButtonClicked`);
+        store.error = 0;
         store.adding = false;
         store.edit = false;
         renderPage();
@@ -350,9 +348,17 @@ function handleDeleteButtonClicked() {
         const id = getInnerContainerId(event.currentTarget);
 
         api.deleteItem(id) 
-            .then(res => res.json())
+            .then(res => {
+                if (res.ok) { 
+                    return res.json();
+                }
+                store.errorMessage = res.statusText;
+                store.error = 1;
+                renderPage();
+                throw new Error(store.errorMessage);
+            })
             .then(() => {
-          
+                store.error = 0;
                 store.findAndDelete(id);
                 renderPage();
             }).catch(err => console.error(err.message));
@@ -398,15 +404,15 @@ function handleEditButtonSubmit() {
                 return res.json();
             }
 
+            // Regular Expression for htts://
             let regexp = /^https:\/\//;
 
-            console.log(regexp.test(itemUrl));
             // If itemTitle or itemUrl are empty, 
             // Else if itemUrl is not valid,
             // show specified errors.
             if(itemTitle === "" || itemUrl === "") {
                 store.errorMessage = "Title and URL are required fields.";
-            } else if(regexp.test(itemUrl)) {
+            } else if(!regexp.test(itemUrl)) {
                 store.errorMessage = "URL Must begin with 'https://";
             } else {
                 store.errorMessage = res.statusText;

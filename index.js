@@ -9,16 +9,24 @@ import bookmarks from './bookmarks.js';
 
 const main = function () {
   api.getItems()
-    .then(res => res.json())
+    .then(res => {
+        if (res.ok) { 
+            return res.json();
+        }
+        store.errorMessage = res.statusText;
+        store.error = 1;
+        renderPage();
+        throw new Error(store.errorMessage);
+    })
     .then((items) => {
-    items.forEach((item) => store.addBookmark(item));
-    console.log(store.bookmarks)
-    
-    bookmarks.renderPage();
-  });
+        store.error = 0;
+        items.forEach((item) => store.addBookmark(item));
+        console.log(store.bookmarks)
+        
+        bookmarks.renderPage();
+    });
 
   bookmarks.bindEventListeners();
-  //bookmarks.renderPage();
 };
 
 $(main);
