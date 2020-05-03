@@ -124,12 +124,14 @@ Add Container Styles
 -------------------
 */
 .add-upper-container {
-    width: 80%;
+    width: 81%;
     height: 15vw;
     margin-left: auto;
     margin-right: auto;
     overflow: visible;
-}
+    /* border: 3px rgb(151, 3, 170) outset;
+    padding: 2px; */
+} 
 
 .js-add-input {
     width: 100%;
@@ -198,17 +200,19 @@ Add Container Styles
 }
 
 .add-inner-rating input[type="radio"]:checked+label {
-    background-color: purple;
+    /* background-color: purple; */
+    background-image: url('/media/star_icon_small.png');
 }
 
 .add-inner-rating input[type="radio"]:hover+label {
-    background-color: purple;
+    /* background-color: purple; */
+    background-image: url('/media/star_icon_small.png');
     cursor: pointer;
 }
 
 .star {
     display: flex;
-    background-image: url('/media/star_icon_small.png');
+    background-image: url('/media/empty_star_icon.png');
     vertical-align: middle;
     background-size: contain;
     background-repeat: no-repeat;
