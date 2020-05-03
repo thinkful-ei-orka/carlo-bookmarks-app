@@ -23,7 +23,7 @@ Main View Styles
     flex-direction: row;
     justify-content: space-between;
     width: 80%;
-    height: 15vw;
+    height: 50px;
     margin-left: auto;
     margin-right: auto;
     padding: 4px;
@@ -124,8 +124,8 @@ Add Container Styles
 -------------------
 */
 .add-upper-container {
-    width: 81%;
-    height: 15vw;
+    width: 80%;
+    height: 50px;
     margin-left: auto;
     margin-right: auto;
     overflow: visible;
@@ -135,7 +135,7 @@ Add Container Styles
 
 .js-add-input {
     width: 100%;
-    height: 10vw;
+    height: 35px;
     /* box-shadow: 1px 2px; */
 }
 
@@ -153,6 +153,7 @@ Add Container Styles
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    vertical-align: middle;
     height: 12vw;
     padding: 5px;
     border-bottom: 1px solid black;
@@ -160,11 +161,11 @@ Add Container Styles
 
 .js-add-inner-title {
     width: 70%;
+    height: 28px;
     vertical-align: middle;
     font-size: large;
     padding-top: 2px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: auto;
     /* box-shadow: 1px 2px; */
 }
 
@@ -275,4 +276,37 @@ textarea {
 
 .js-edit-button {
     width: 47%;
+}
+
+@media screen and (min-width: 430px) {
+    main {
+        width: 430px;
+        height: 540px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .lower-container {
+       height: 500px; 
+    }
+
+    .add-lower-container {
+        height: 430px;
+    }
+
+    .add-button-container {
+        height: 50px;
+    } 
+
+    .add-inner-top {
+        height: 50px;
+    }
+
+    .add-inner-rating {
+        height: 50px;
+    }
+
+    .js-add-inner-description {
+        height: 288px;
+    }
 }
