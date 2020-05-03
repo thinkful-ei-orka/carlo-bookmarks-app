@@ -85,7 +85,7 @@ Main View Styles
 }
 
 .star-inner {
-    background-image: url('/media/star_icon_small.png');
+    background-image: url('media/star_icon_small.png');
     background-size: contain;
     background-repeat: no-repeat;
     width: 18px;
@@ -229,18 +229,18 @@ Create/Edit Page Styles
 
 .add-inner-rating input[type="radio"]:checked+label {
     /* background-color: purple; */
-    background-image: url('/media/star_icon_small.png');
+    background-image: url('media/star_icon_small.png');
 }
 
 .add-inner-rating input[type="radio"]:hover+label {
     /* background-color: purple; */
-    background-image: url('/media/star_icon_small.png');
+    background-image: url('media/star_icon_small.png');
     cursor: pointer;
 }
 
 .star {
     display: flex;
-    background-image: url('/media/empty-star-transparent.png');
+    background-image: url('media/empty-star-transparent.png');
     vertical-align: middle;
     background-size: contain;
     background-repeat: no-repeat;
