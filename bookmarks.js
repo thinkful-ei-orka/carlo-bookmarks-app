@@ -244,6 +244,7 @@ function renderPage() {
 // Event Listener Functions
 //-----------------------
 
+// Target closest info-container for ID of bookmark
 function getInnerContainerId (target) {
     return $(target)
         .closest('.combo-container')
@@ -251,31 +252,40 @@ function getInnerContainerId (target) {
         .data('item-id');
 }
 
+// Expand bookmark
 function handleBookmarkClicked () {
     $('main').on('click', '.bookmark-container', event => {
         const id = getInnerContainerId(event.currentTarget);
         console.log(`handleBookmarkClicked ran`);
-        const item = store.findById(id);
-        console.log(item);
-        const itemObj = { expanded: !item.expanded };
 
+        // Find ID, toggle expanded class, and re-render page
+        const item = store.findById(id);
+        const itemObj = { expanded: !item.expanded };
         store.findAndUpdate(id, itemObj);
         renderPage();
     });
 }
 
+// Function handling New Bookmark button clicked
 function handleNewButtonClicked () {
     $('main').on('click', '.new-button', event => {
         console.log(`ran handleNewButtonClicked`);
+
+        // Set adding state to true
+        // Make sure edit state is false for the page
+        // And re-render
         store.adding = true;
         store.edit = false;
         renderPage();
     });
 }
 
+// Handle cancel button clicked
 function handleCancelButtonClicked() {
     $('main').on('click', '.cancel-button', event => {
         console.log(`ran handleNewButtonClicked`);
+
+        // Set all states to default for main page render.
         store.error = 0;
         store.adding = false;
         store.edit = false;
@@ -283,33 +293,31 @@ function handleCancelButtonClicked() {
     });
 }
 
+// Handle create new bookmark submission
 function handleCreateButtonClicked() {
     $('main').on('submit', '.add-form', event => {
         event.preventDefault();
         console.log(`ran handleCreateButtonClicked`);
+
+        // Grab values in form of rating, description, URL, title
         const itemRating = $('input[name="rating"]:checked').val();
         let itemDescription = $('.js-add-inner-description').val();
         const itemUrl = $('.js-add-input').val();
         const itemTitle = $('.js-add-inner-title').val();
 
+        // Set item description to null if empty
         if(itemDescription === "") {
             itemDescription = null;
         }
 
-        // const bookmarkObject = {
-        //     'title': itemTitle,
-        //     'url': itemUrl,
-        //     'desc': itemDescription,
-        //     'rating': itemRating
-        // };
-
-        // Add Post below
+        // Handle post to bookmarks API
         api.createItem(itemTitle, itemUrl, itemDescription, itemRating)
             .then(res => {
                 if (res.ok) { 
                     return res.json();
                 }
 
+                // Regular Expression for https://
                 let regexp = /^https:\/\//;
 
                 console.log(regexp.test(itemUrl));
@@ -324,14 +332,17 @@ function handleCreateButtonClicked() {
                     store.errorMessage = res.statusText;
                 }
                 
-
+                // Set error state to on value, re-render, and throw error message.
                 store.error = 1;
                 renderPage();
                 throw new Error(store.errorMessage);
             })
             .then((response) => {
-                store.error = 0;
+                // If response is ok, 
+                // Default error state, take back to home page
+                // And locally store the response to add to store.
 
+                store.error = 0;
                 store.adding = false;
                 store.addBookmark(response);
                 renderPage();
@@ -343,12 +354,14 @@ function handleCreateButtonClicked() {
     });
 }
 
+// Handle delete button
 function handleDeleteButtonClicked() {
     $('main').on('click', '.info-trash-button', event => {
         const id = getInnerContainerId(event.currentTarget);
 
         api.deleteItem(id) 
             .then(res => {
+                // Error handling
                 if (res.ok) { 
                     return res.json();
                 }
@@ -358,6 +371,8 @@ function handleDeleteButtonClicked() {
                 throw new Error(store.errorMessage);
             })
             .then(() => {
+                // If response is ok, 
+                // Default error state, delete item in store based on ID, and re-render
                 store.error = 0;
                 store.findAndDelete(id);
                 renderPage();
@@ -365,9 +380,13 @@ function handleDeleteButtonClicked() {
     });
 }
 
+// Homepage bookmark edit button clicked
 function handleEditButtonClicked() {
     $('main').on('click', '.info-edit-button', event => {
         console.log(`ran handleEditButtonClicked`);
+
+        // Edit state set to true as well as adding state (same skeleton as create)
+        // Grab ID and store the ID from the element on the homepage that was clicked.
         store.edit = true;
         store.adding = true;
         const id = getInnerContainerId(event.currentTarget);
@@ -376,19 +395,20 @@ function handleEditButtonClicked() {
     });
 }
 
+// Handle edit button submission on edit page
 function handleEditButtonSubmit() {
     $('main').on('submit', '.edit-form', event => {
         event.preventDefault();
         console.log(`Submission on Edit Button Ran`);
 
-        
-
+        // Grab values in form of rating, description, URL, title
         const itemRating = $('input[name="rating"]:checked').val();
         const itemDescription = $('.js-add-inner-description').val();
         const itemUrl = $('.js-add-input').val();
         const itemTitle = $('.js-add-inner-title').val();
         const id = store.tempId;
 
+        // Add them to an object.
         const bookmarkObject = {
             'title': itemTitle,
             'url': itemUrl,
@@ -396,15 +416,14 @@ function handleEditButtonSubmit() {
             'rating': itemRating
         };
 
-        
-
+        // Handle PATCH to update item.
         api.updateItem(id, bookmarkObject)
         .then(res => {
             if (res.ok) { 
                 return res.json();
             }
 
-            // Regular Expression for htts://
+            // Regular Expression for https://
             let regexp = /^https:\/\//;
 
             // If itemTitle or itemUrl are empty, 
@@ -439,10 +458,11 @@ function handleEditButtonSubmit() {
     });
 }
 
+// Handle filter selection from dropdown menu
 function handleFilterSelection() {
     $('main').on('change', '.js-filter-menu', event => {
+        // Get filter value and set store filter variable to the rating selected
         const rating = $(".js-filter-menu option:selected").val();
-
         console.log(rating);
         store.filter = Number(rating);
         renderPage();

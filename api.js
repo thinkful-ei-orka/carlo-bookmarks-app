@@ -5,12 +5,15 @@ export default {
     deleteItem
 };
 
+// Base URL for API
 const BASE_URL = 'https://thinkful-list-api.herokuapp.com/carlop/bookmarks';
 
+// GET items from API
 function getItems() {
     return fetch(`${BASE_URL}`);
 }
 
+// POST item to API
 function createItem(title, url, desc, rating) {
     let newBookmark = {
         'title': title,
@@ -29,6 +32,7 @@ function createItem(title, url, desc, rating) {
     });
 }
 
+// PATCH item to API
 function updateItem(id, updateData) {
     let newUrl = `${BASE_URL}/${id}`;
     let newItem = JSON.stringify(updateData);
@@ -40,6 +44,7 @@ function updateItem(id, updateData) {
     });
 }
 
+// DELETE item from API
 function deleteItem(id) {
     let newUrl = `${BASE_URL}/${id}`;
 
