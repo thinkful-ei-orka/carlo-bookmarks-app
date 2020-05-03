@@ -116,32 +116,33 @@ function generateMainPage(bookmark) {
     return mainStructure;
 }
 
-// Create Bookmark HTML
+// Create/Edit Bookmark HTML
+// ** Put together Create and Edit because of the very similar
+// structure and did not want to reiterate code **
 function generateCreateOrEditBookmark(bookmark) {
-    let titleString = "";
-    let urlString = "";
-    let descriptionString = "";
-    let editHtmlString = `
-        <button type="submit" class="create-button">Create</button>
-    `;
-    let formString = '<form class="add-form">';
-    let rating = -1;
+    // Create default strings for Create Page values
+    let headerString = "Add New Bookmark:";
+    let titleString = ""; // Blank title text box input
+    let urlString = ""; // Blank URL text box input
+    let descriptionString = ""; // Blank description text box input
+    let rating = -1; // Rating set to -1 for no pre-selected radio button
+    let ratingHtmlString = ""; // Initializes rating HTML string
+    let buttonString = `<button type="submit" class="create-button">Create</button>`; // Button HTML for Create button
+    let formString = '<form class="add-form">'; // Default to Create bookmark form. 
 
+    // If edit state is true, change strings to Edit Page values
     if(store.edit) {
-        titleString = `value="${bookmark.title}"`;
-        urlString = `value="${bookmark.url}"`
-        descriptionString = bookmark.desc;
-        editHtmlString = `
-            <button type="submit" class="js-edit-button">Edit</button>
-        `;
-        formString = '<form class="edit-form">';
-        rating = bookmark.rating;
+        headerString = "Edit Current Bookmark:"; 
+        titleString = `value="${bookmark.title}"`; // Sets value of title textbox to current title
+        urlString = `value="${bookmark.url}"`; // Sets value of URL textbox to current URL
+        descriptionString = bookmark.desc; // Sets value of description textbox to current description
+        rating = bookmark.rating; // Sets up pre-selection of radio button
+        buttonString = `<button type="submit" class="js-edit-button">Edit</button>`; // Change button HTML to Edit button
+        formString = '<form class="edit-form">'; // Change to Edit bookmark form
     } 
 
-    let ratingString = "";
-
-
-    // Create rating HTML. Iterate until i = rating, in which case, add checked
+    // Create rating HTML with loop. Iterate until i = rating, in which case, add checked value for pre-selection.
+    // If edit state is not checked, rating will go without pre-selection.
     for(let i = 1; i <= 5; i++) {
         let checked = "";
         if(i === Number(rating) && store.edit) {
@@ -149,15 +150,16 @@ function generateCreateOrEditBookmark(bookmark) {
             checked = "checked";
         }
 
-        ratingString += `<input type="radio" name="rating" class="js-add-rating" id="rating${i}" value="${i}" ${checked}>
-        <label class="star" for="rating">${i}</label>`
+        ratingHtmlString += `<input type="radio" name="rating" class="js-add-rating" id="rating${i}" value="${i}" ${checked}>
+        <label class="star" for="rating${i}">${i}</label>`
     }
 
+    // Bring the structure together with all values from above.
     let createStructure = `
     <div class="main-container">
         ${formString}
             <div class="add-upper-container">
-                    <label for="add-input">Add New Bookmark:</label>
+                    <label for="add-input">${headerString}</label>
                     <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com" ${urlString}>
             </div>
             <div class="add-lower-container">
@@ -166,7 +168,8 @@ function generateCreateOrEditBookmark(bookmark) {
             </div>
             <div class="add-inner-bottom">
                 <div class="add-inner-rating">
-                ${ratingString} 
+                    <div>Rating</div>
+                    ${ratingHtmlString} 
                 </div>
                 <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)">${descriptionString}</textarea>
             </div>
@@ -174,7 +177,7 @@ function generateCreateOrEditBookmark(bookmark) {
             <div class="js-error-message hidden">ERROR: ${store.errorMessage} </div>
             <div class="add-button-container">
                 <button class="cancel-button">Cancel</button>
-                ${editHtmlString}
+                ${buttonString}
             </div>
         </form>
     </div>
@@ -187,31 +190,36 @@ function generateCreateOrEditBookmark(bookmark) {
 // Render Functions
 //-----------------------
 
-
+// Generates page string given type of data.
 function generatePageString(data) {
-    // Handle which page to load
+    console.log(`Ran generatePageString`);
+
     let pageString = "";
+    let bookmark = store.findById(store.tempId); // Get single target bookmark and pass it to create/edit page
+
+    // Handle which page to load given state. 
+    // - Adding means go to Create/Edit page
+    // - Otherwise, go to Main page
     if(store.adding) {
-        let bookmark = store.findById(store.tempId); // Get single target bookmark and pass it to create/edit page
         pageString = generateCreateOrEditBookmark(bookmark);
     } else {
         pageString = generateMainPage(data);
     }
 
-    console.log(`Ran generatePageString`);
-    
-
     return pageString;
-
 }
 
 function renderPage() {
     console.log("Rendering page");
 
+    // Initialize HTML to the correct returned HTML from generatePageString
     const pageString = generatePageString(store.bookmarks);
 
+    // Add HTML to main
     $('main').html(pageString);
 
+    // After main is loaded, check to see if an error flag has been given.
+    // If so, add error HTML to page.
     if(store.error === 1) {
         $('.js-error-message').removeClass('hidden');
     } else if(store.error === 0) {
