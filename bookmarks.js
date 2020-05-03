@@ -62,7 +62,7 @@ function generateMainPage(bookmark) {
             <div class="combo-container">
                 <div class="bookmark-container">
                     <div class="title-box">${item.title}</div>
-                    <div class="star-box">${rating}</div>
+                    <div class="star-box">${ratingHtml}</div>
                 </div>
                 <div class="info-container" data-item-id="${item.id}">
                     <div class="info-inner-top">

@@ -2,10 +2,14 @@
     box-sizing: border-box;
 }
 
-/* body {
-    background-color: purple;
-    color: white;
-} */
+html {
+    background-image: url('media/leaf-background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    min-height: 100%;
+    min-width: 100%;
+
+}
 
 h1 {
     text-align: center;
@@ -64,7 +68,7 @@ Main View Styles
 .star-box {
     display: flex;
     flex-direction: row-reverse;
-    justify-content: flex-end;
+    justify-content: flex;
     width: 90px;
 }
 
@@ -308,5 +312,17 @@ textarea {
 
     .js-add-inner-description {
         height: 288px;
+    }
+
+    .info-inner-top {
+        height: 85px;
+    }
+
+    .info-inner-bottom {
+        height: 125px;
+    }
+
+    .info-url-button { 
+        height: 65px;
     }
 }
