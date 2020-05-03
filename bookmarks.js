@@ -41,10 +41,16 @@ function generateMainPage(bookmark) {
         }
 
         // Check if rating is not equal to anything. 
-        // If it is, make rating equal to rating of current bookmark
+        // If it is, make rating equal to rating of current bookmark and create rating HTML
         // If it is not, default to "No Rating" value
+        let ratingHtml = "";
+
         if(item.rating !== null) {
             rating = item.rating;
+
+            for(let i = 1; i <= rating; i++) {
+                ratingHtml += `<div class="star-inner"></div>`
+            }
         } else {
             rating = "No Rating";
         }
@@ -79,7 +85,7 @@ function generateMainPage(bookmark) {
             <div class="combo-container">
                 <div class="bookmark-container">
                     <div class="title-box">${item.title}</div>
-                    <div class="star-box">${rating}</div>
+                    <div class="star-box">${ratingHtml}</div>
                 </div>
                 <div class="info-container" data-item-id="${item.id}">
                 </div>
@@ -151,7 +157,7 @@ function generateCreateOrEditBookmark(bookmark) {
         }
 
         ratingHtmlString += `<input type="radio" name="rating" class="js-add-rating" id="rating${i}" value="${i}" ${checked}>
-        <label class="star" for="rating${i}">${i}</label>`
+        <label class="star" for="rating${i}"> <p>${i}</p> </label>`
     }
 
     // Bring the structure together with all values from above.
@@ -160,15 +166,14 @@ function generateCreateOrEditBookmark(bookmark) {
         ${formString}
             <div class="add-upper-container">
                     <label for="add-input">${headerString}</label>
-                    <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com" ${urlString}>
+                    <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com" ${urlString} required>
             </div>
             <div class="add-lower-container">
             <div class="add-inner-top">
-                <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here" ${titleString}>
+                <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here" ${titleString} required>
             </div>
             <div class="add-inner-bottom">
                 <div class="add-inner-rating">
-                    <div>Rating</div>
                     ${ratingHtmlString} 
                 </div>
                 <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)">${descriptionString}</textarea>
@@ -211,6 +216,9 @@ function generatePageString(data) {
 
 function renderPage() {
     console.log("Rendering page");
+
+    // Reset error state
+    store.error = 0;
 
     // Initialize HTML to the correct returned HTML from generatePageString
     const pageString = generatePageString(store.bookmarks);
@@ -305,7 +313,7 @@ function handleCreateButtonClicked() {
                 if(itemTitle === "" || itemUrl === "") {
                     store.errorMessage = "Title and URL are required fields.";
                 } else if(!regexp.test(itemUrl)) {
-                    store.errorMessage = "URL Must begin with 'https://";
+                    store.errorMessage = "URL Must begin with 'https://'";
                 } else {
                     store.errorMessage = res.statusText;
                 }

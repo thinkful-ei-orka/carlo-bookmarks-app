@@ -2,6 +2,11 @@
     box-sizing: border-box;
 }
 
+/* body {
+    background-color: purple;
+    color: white;
+} */
+
 h1 {
     text-align: center;
     min-width: 300px;
@@ -57,7 +62,17 @@ Main View Styles
 }
 
 .star-box {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    width: 90px;
+}
 
+.star-inner {
+    background-image: url('/media/star_icon_small.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 18px;
 }
 
 .info-inner-top {
@@ -80,9 +95,9 @@ Main View Styles
 .info-inner-controls {
     display: flex;
     flex-direction: column;
+    justify-content: space-evenly;
     align-items: center;
     width: 30%;
-    padding-top: 5px;
     margin-right: 15px;
 }
 
@@ -119,6 +134,7 @@ Add Container Styles
 .js-add-input {
     width: 100%;
     height: 10vw;
+    /* box-shadow: 1px 2px; */
 }
 
 .add-lower-container {
@@ -128,6 +144,7 @@ Add Container Styles
     margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
+    /* box-shadow: 2px 4px; */
 }
 
 .add-inner-top {
@@ -146,6 +163,7 @@ Add Container Styles
     padding-top: 2px;
     margin-left: auto;
     margin-right: auto;
+    /* box-shadow: 1px 2px; */
 }
 
 .add-inner-edit {
@@ -160,6 +178,7 @@ Add Container Styles
     margin: 15px;
     margin-top: 10px;
     height: 80%;
+    
 }
 
 .add-inner-rating {
@@ -169,6 +188,8 @@ Add Container Styles
     height: 12vw;
     padding-right: 5px;
     border: 1px solid black;
+    padding: 3px;
+    /* box-shadow: 1px 2px; */
 }
 
 .js-add-rating {
@@ -177,27 +198,32 @@ Add Container Styles
 }
 
 .add-inner-rating input[type="radio"]:checked+label {
-    background-color: black;
-    color: white;
+    background-color: purple;
 }
 
 .add-inner-rating input[type="radio"]:hover+label {
-    background-color: black;
-    color: white;
+    background-color: purple;
     cursor: pointer;
 }
 
 .star {
+    display: flex;
+    background-image: url('/media/star_icon_small.png');
+    vertical-align: middle;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
     text-align: center;
-    width: 10%;
-    padding-top: 8px;
+    width: 40px;
+    padding-top: 4px;
     cursor: pointer;
+    font-size: small;
+    font-weight: bold;
 }
 
-/* .rating:checked + label {
-    background-color: black;
-    color: white;
-} */
+p {
+    margin: auto;
+}
 
 textarea {
     width: 100%;
@@ -236,6 +262,9 @@ textarea {
     width: 300px;
     height: 24px;
     border: 1px solid black;
+    background-color: rgb(197, 7, 7);
+    color: white;
+    border-radius: 10px;
     padding-top: 4px;
     font-size: small;
 }
