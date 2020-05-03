@@ -141,10 +141,18 @@ function generateCreateOrEditBookmark(bookmark) {
         headerString = "Edit Current Bookmark:"; 
         titleString = `value="${bookmark.title}"`; // Sets value of title textbox to current title
         urlString = `value="${bookmark.url}"`; // Sets value of URL textbox to current URL
-        descriptionString = bookmark.desc; // Sets value of description textbox to current description
+        
         rating = bookmark.rating; // Sets up pre-selection of radio button
         buttonString = `<button type="submit" class="js-edit-button">Edit</button>`; // Change button HTML to Edit button
         formString = '<form class="edit-form">'; // Change to Edit bookmark form
+
+        // Sets value of description textbox to current description. Empty if value is null.
+        if(bookmark.desc === null) {
+            descriptionString = "";
+        } else {
+            descriptionString = bookmark.desc;
+        }
+         
     } 
 
     // Create rating HTML with loop. Iterate until i = rating, in which case, add checked value for pre-selection.
