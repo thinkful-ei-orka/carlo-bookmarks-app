@@ -171,10 +171,21 @@ Add Container Styles
     border: 1px solid black;
 }
 
-/*.js-add-rating {
+.js-add-rating {
     width: 0;
     height: 0;
-}*/
+}
+
+.add-inner-rating input[type="radio"]:checked+label {
+    background-color: black;
+    color: white;
+}
+
+.add-inner-rating input[type="radio"]:hover+label {
+    background-color: black;
+    color: white;
+    cursor: pointer;
+}
 
 .star {
     text-align: center;
@@ -183,10 +194,10 @@ Add Container Styles
     cursor: pointer;
 }
 
-.rating:checked + label {
+/* .rating:checked + label {
     background-color: black;
     color: white;
-}
+} */
 
 textarea {
     width: 100%;
