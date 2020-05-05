@@ -19,13 +19,55 @@ function generateMainPage(bookmark) {
     let description = "";
     let rating = "";
     let filteredBookmarks = [];
+    let filteredHtml = "";
 
     // Checks value of filter dropdown menu and filters all bookmarks in store according to current filter rating
     // If filter is 0 (no rating), show all bookmarks on page
-    if(store.filter !== 0) {
+    // Accompanied HTML generation as well.
+    if(store.filter !== -1) {
         filteredBookmarks = bookmark.filter(item => item.rating >= store.filter);
+
+        filteredHtml = `
+            <select name="filter-menu" class="js-filter-menu">
+                <option disabled>Filter By:</option>
+            `;
+
+        for(let i = 0; i <= 5; i++) {
+            if(i === store.filter) {
+                if(i === 0) {
+                    filteredHtml += `<option value="0" selected>No Rating</option>`;
+                } else {
+                    filteredHtml += `<option value="${i}" selected>${i}+ Stars</option>`;
+                }
+                
+            } else {
+                if(i === 0) {
+                    filteredHtml += `<option value="0">No Rating</option>`;
+                } else {
+                    filteredHtml += `<option value="${i}">${i}+ Stars</option>`;
+                }
+                
+            }
+        }
+
+        filteredHtml += `
+
+            </select>`;
+
     } else {
         filteredBookmarks = bookmark;
+
+        filteredHtml = `
+            <select name="filter-menu" class="js-filter-menu">
+                <option disabled selected>Filter By:</option>
+                <option value="0">No Rating</option>
+                <option value="1">1+ Stars</option>
+                <option value="2">2+ Stars</option>
+                <option value="3">3+ Stars</option>
+                <option value="4">4+ Stars</option>
+                <option value="5">5+ Stars</option>
+            </select>
+        `;
     }
     
     // Iterates through each bookmark to create HTML
@@ -34,10 +76,11 @@ function generateMainPage(bookmark) {
         // Check if description is not empty. 
         // If so, make description equal to the bookmark's description from API
         // If not, put default string.
-        if(item.desc !== null) {
-            description = item.desc;
-        } else {
+        if(item.desc === null || item.desc === "") {
             description = "No description provided.";
+           
+        } else {
+            description = item.desc;
         }
 
         // Check if rating is not equal to anything. 
@@ -49,7 +92,7 @@ function generateMainPage(bookmark) {
             rating = item.rating;
 
             for(let i = 1; i <= rating; i++) {
-                ratingHtml += `<div class="star-inner"></div>`
+                ratingHtml += `<div class="star-inner"></div>`;
             }
         } else {
             ratingHtml = `<div class="no-rating-box">No Rating</div>`;
@@ -59,8 +102,8 @@ function generateMainPage(bookmark) {
         // If so, add expanded HTML to the final bookmark structure
         if(item.expanded) {
             bookmarkStructure += `
-            <div class="combo-container">
-                <div class="bookmark-container">
+            <section class="combo-container">
+                <div class="bookmark-container" tabindex="0">
                     <div class="title-box">${item.title}</div>
                     <div class="star-box">${ratingHtml}</div>
                 </div>
@@ -78,18 +121,18 @@ function generateMainPage(bookmark) {
                         ${description}
                     </div>
                 </div>
-            </div>
+            </section>
             `;
         } else {
             bookmarkStructure += `
-            <div class="combo-container">
+            <section class="combo-container" tabindex="0">
                 <div class="bookmark-container">
                     <div class="title-box">${item.title}</div>
                     <div class="star-box">${ratingHtml}</div>
                 </div>
                 <div class="info-container" data-item-id="${item.id}">
                 </div>
-            </div>
+            </section>
             `;
         }
 
@@ -100,23 +143,15 @@ function generateMainPage(bookmark) {
     // Default structure on main page 
     // Adding resulting bookmark structure from filter/expansion
     let mainStructure = `
-        <div class="main-container">
-            <div class="upper-container">
+        <section class="main-container">
+            <section class="upper-container">
                 <button class="new-button">+ New</button>
-                <select name="filter-menu" class="js-filter-menu">
-                    <option disabled selected>Filter By:</option>
-                    <option value="1">1+ Stars</option>
-                    <option value="2">2+ Stars</option>
-                    <option value="3">3+ Stars</option>
-                    <option value="4">4+ Stars</option>
-                    <option value="5">5+ Stars</option>
-                    <option value="0">No Rating</option>
-                </select>
-            </div>
-            <div class="lower-container">
+                ${filteredHtml}
+            </section>
+            <section class="lower-container">
                 ${bookmarkStructure}
-            </div>
-        </div>`
+            </section>
+        </section>`
 
 
     return mainStructure;
@@ -228,6 +263,7 @@ function renderPage() {
     // Initialize HTML to the correct returned HTML from generatePageString
     const pageString = generatePageString(store.bookmarks);
 
+
     // Add HTML to main
     $('main').html(pageString);
 
@@ -252,19 +288,37 @@ function getInnerContainerId (target) {
         .data('item-id');
 }
 
-// Expand bookmark
+// Expand bookmark on click
 function handleBookmarkClicked () {
     $('main').on('click', '.bookmark-container', event => {
         const id = getInnerContainerId(event.currentTarget);
         console.log(`handleBookmarkClicked ran`);
 
-        // Find ID, toggle expanded class, and re-render page
+        // Find ID, toggle expanded property, and re-render page
         const item = store.findById(id);
         const itemObj = { expanded: !item.expanded };
         store.findAndUpdate(id, itemObj);
         renderPage();
     });
 }
+
+// Expand bookmark on enter keypress
+// function handleBookmarkKeyPress () {
+//     $('main').keypress(event => {
+//         var keycode = (event.keyCode ? event.keyCode : event.which);
+//         const id = getInnerContainerId(event.currentTarget);
+//         console.log(`handleBookmarkKeyPress ran`);
+//         if(keycode == '13'){
+
+    
+//             // Find ID, toggle expanded property, and re-render page
+//             const item = store.findById(id);
+//             const itemObj = { expanded: !item.expanded };
+//             store.findAndUpdate(id, itemObj);
+//             renderPage();
+//         }
+//     });
+// }
 
 // Function handling New Bookmark button clicked
 function handleNewButtonClicked () {
@@ -306,9 +360,9 @@ function handleCreateButtonClicked() {
         const itemTitle = $('.js-add-inner-title').val();
 
         // Set item description to null if empty
-        if(itemDescription === "") {
-            itemDescription = null;
-        }
+        // if(itemDescription === "") {
+        //     itemDescription = null;
+        // }
 
         // Handle post to bookmarks API
         api.createItem(itemTitle, itemUrl, itemDescription, itemRating)
@@ -320,7 +374,6 @@ function handleCreateButtonClicked() {
                 // Regular Expression for https://
                 let regexp = /^https:\/\//;
 
-                console.log(regexp.test(itemUrl));
                 // If itemTitle or itemUrl are empty, 
                 // Else if itemUrl is not valid,
                 // show specified errors.
@@ -348,12 +401,9 @@ function handleCreateButtonClicked() {
                 renderPage();
 
             }).catch(err => console.error(err));
-
-        
-
     });
 }
-
+    
 // Handle delete button
 function handleDeleteButtonClicked() {
     $('main').on('click', '.info-trash-button', event => {
@@ -463,6 +513,7 @@ function handleFilterSelection() {
     $('main').on('change', '.js-filter-menu', event => {
         // Get filter value and set store filter variable to the rating selected
         const rating = $(".js-filter-menu option:selected").val();
+        // $(".js-filter-menu").val(rating);
         console.log(rating);
         store.filter = Number(rating);
         renderPage();
@@ -477,6 +528,7 @@ function bindEventListeners () {
     handleCreateButtonClicked();
     handleCancelButtonClicked();
     handleNewButtonClicked();
+    //handleBookmarkKeyPress();
     handleBookmarkClicked();
 }
 

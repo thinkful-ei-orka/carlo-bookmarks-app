@@ -1,7 +1,4 @@
-// import $ from 'jquery';
 
-// import 'normalize.css';
-// import './index.css';
 
 import store from './store.js';
 import api from './api.js';
@@ -15,7 +12,7 @@ const main = function () {
         }
         store.errorMessage = res.statusText;
         store.error = 1;
-        renderPage();
+        bookmarks.renderPage();
         throw new Error(store.errorMessage);
     })
     .then((items) => {
@@ -24,7 +21,7 @@ const main = function () {
         console.log(store.bookmarks)
         
         bookmarks.renderPage();
-    });
+    }).catch(err => console.error(err));
 
   bookmarks.bindEventListeners();
 };

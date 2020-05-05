@@ -1,10 +1,3 @@
-export default {
-    getItems,
-    createItem,
-    updateItem,
-    deleteItem
-};
-
 // Base URL for API
 const BASE_URL = 'https://thinkful-list-api.herokuapp.com/carlop/bookmarks';
 
@@ -53,3 +46,10 @@ function deleteItem(id) {
         headers: { 'Content-Type': 'application/json' }
     });
 }
+
+export default {
+    getItems,
+    createItem,
+    updateItem,
+    deleteItem
+};

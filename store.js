@@ -2,7 +2,7 @@ const bookmarks = []; // Initialize empty bookmarks array of objects
 const adding = false; // Create/ page state
 const error = 0; // Error page state (0 = no error, 1 = error)
 const errorMessage = ""; // Global error message
-const filter = 0; // Filter value
+const filter = -1; // Filter value
 const edit = false; // Edit page state
 const tempId = 0; // Stored ID for page state transition
 
