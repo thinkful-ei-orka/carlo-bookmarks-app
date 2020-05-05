@@ -22,8 +22,9 @@ function generateMainPage(bookmark) {
     let filteredHtml = "";
 
     // Checks value of filter dropdown menu and filters all bookmarks in store according to current filter rating
-    // If filter is 0 (no rating), show all bookmarks on page
-    // Accompanied HTML generation as well.
+    // If filter is 0 (no rating), show all bookmarks on page.
+    // Sets current selected filter menu to the top selected value.
+    // Accompanied HTML generation as well. 
     if(store.filter !== -1) {
         filteredBookmarks = bookmark.filter(item => item.rating >= store.filter);
 
@@ -32,27 +33,25 @@ function generateMainPage(bookmark) {
                 <option disabled>Filter By:</option>
             `;
 
-        for(let i = 0; i <= 5; i++) {
+        for(let i = 1; i <= 5; i++) {
             if(i === store.filter) {
-                if(i === 0) {
-                    filteredHtml += `<option value="0" selected>No Rating</option>`;
-                } else {
+                // if(i === 0) {
+                //     filteredHtml += `<option value="0" selected>No Rating</option>`;
+                // } else {
                     filteredHtml += `<option value="${i}" selected>${i}+ Stars</option>`;
-                }
+                // }
                 
             } else {
-                if(i === 0) {
-                    filteredHtml += `<option value="0">No Rating</option>`;
-                } else {
+                // if(i === 0) {
+                //     filteredHtml += `<option value="0">No Rating</option>`;
+                // } else {
                     filteredHtml += `<option value="${i}">${i}+ Stars</option>`;
-                }
+                // }
                 
             }
         }
 
-        filteredHtml += `
-
-            </select>`;
+        filteredHtml += `</select>`;
 
     } else {
         filteredBookmarks = bookmark;
@@ -60,7 +59,6 @@ function generateMainPage(bookmark) {
         filteredHtml = `
             <select name="filter-menu" class="js-filter-menu">
                 <option disabled selected>Filter By:</option>
-                <option value="0">No Rating</option>
                 <option value="1">1+ Stars</option>
                 <option value="2">2+ Stars</option>
                 <option value="3">3+ Stars</option>
