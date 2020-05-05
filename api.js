@@ -1,9 +1,27 @@
 // Base URL for API
 const BASE_URL = 'https://thinkful-list-api.herokuapp.com/carlop/bookmarks';
 
+function listApiFetch(...args) {
+    let error;
+    return fetch(...args)
+        .then(res => {
+            if(!res.ok) {
+                error = { code: res.status };
+            }
+            return res.json();
+        })
+        .then(data => {
+            if(error) {
+                error.message = data.message;
+                return Promise.reject(error);
+            }
+            return data;
+        })
+}
+
 // GET items from API
 function getItems() {
-    return fetch(`${BASE_URL}`);
+    return listApiFetch(`${BASE_URL}`);
 }
 
 // POST item to API
@@ -18,7 +36,7 @@ function createItem(title, url, desc, rating) {
     newBookmark = JSON.stringify(newBookmark);
 
 
-    return fetch(`${BASE_URL}`, {
+    return listApiFetch(`${BASE_URL}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: newBookmark
@@ -30,7 +48,7 @@ function updateItem(id, updateData) {
     let newUrl = `${BASE_URL}/${id}`;
     let newItem = JSON.stringify(updateData);
 
-    return fetch(newUrl, {
+    return listApiFetch(newUrl, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: newItem
@@ -41,7 +59,7 @@ function updateItem(id, updateData) {
 function deleteItem(id) {
     let newUrl = `${BASE_URL}/${id}`;
 
-    return fetch(newUrl, {
+    return listApiFetch(newUrl, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
     });

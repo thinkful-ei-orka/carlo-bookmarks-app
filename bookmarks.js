@@ -364,36 +364,23 @@ function handleCreateButtonClicked() {
         let itemDescription = $('.js-add-inner-description').val();
         const itemUrl = $('.js-add-input').val();
         const itemTitle = $('.js-add-inner-title').val();
+        let regexp = /^https:\/\//;  // Regular Expression for https://
 
         // Handle post to bookmarks API
         if(itemRating === undefined) {
             store.errorMessage = "Must select a rating.";
             store.error = 1;
             renderPage();
+        } else if(itemTitle === "" || itemUrl === "") {
+            store.errorMessage = "Title and URL are required fields.";
+            store.error = 1;
+            renderPage();
+        } else if(!regexp.test(itemUrl)) {
+            store.errorMessage = "URL Must begin with 'https://";
+            store.error = 1;
+            renderPage();
         } else {
             api.createItem(itemTitle, itemUrl, itemDescription, itemRating)
-                .then(res => {
-                    if (!res.ok) { 
-                        // Regular Expression for https://
-                        let regexp = /^https:\/\//;
-
-                        // If itemTitle or itemUrl are empty, 
-                        // Else if itemUrl is not valid,
-                        // show specified errors.
-                        if(itemTitle === "" || itemUrl === "") {
-                            store.errorMessage = "Title and URL are required fields.";
-                        } else if(!regexp.test(itemUrl)) {
-                            store.errorMessage = "URL Must begin with 'https://'";
-                        } else {
-                            store.errorMessage = res.statusText;
-                        }
-
-                        // Set error state to on value, re-render, and throw error message.
-                        throw new Error(store.errorMessage);
-                    }
-
-                    return res.json();
-                })
                 .then((response) => {
                     // If response is ok, 
                     // Default error state, take back to home page
@@ -406,6 +393,7 @@ function handleCreateButtonClicked() {
 
                 }).catch(err => {
                     console.log(err.message);
+                    store.errorMessage = err.message;
                     store.error = 1;
                     renderPage();
                 });
@@ -420,14 +408,6 @@ function handleDeleteButtonClicked() {
         const id = getInnerContainerId(event.currentTarget);
 
         api.deleteItem(id) 
-            .then(res => {
-                // Error handling
-                if (!res.ok) { 
-                    store.errorMessage = res.statusText;
-                    throw new Error(store.errorMessage);
-                }
-                return res.json();
-            })
             .then(() => {
                 // If response is ok, 
                 // Default error state, delete item in store based on ID, and re-render
@@ -494,23 +474,6 @@ function handleEditButtonSubmit() {
             renderPage();
         } else {
             api.updateItem(id, bookmarkObject)
-            .then(res => {
-                if (!res.ok) { 
-                    // If itemTitle or itemUrl are empty, 
-                    // Else if itemUrl is not valid,
-                    // show specified errors.
-                    if(itemTitle === "" || itemUrl === "") {
-                        store.errorMessage = "Title and URL are required fields.";
-                    } else if(!regexp.test(itemUrl)) {
-                        store.errorMessage = "URL Must begin with 'https://";
-                    } else {
-                        store.errorMessage = res.statusText;
-                    }
-
-                    throw new Error(store.errorMessage);
-                }
-                return res.json();
-            })
             .then((response) => {
                 //Find and Update the bookmark with new values in store
                 console.log(response);
