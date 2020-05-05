@@ -35,19 +35,10 @@ function generateMainPage(bookmark) {
 
         for(let i = 1; i <= 5; i++) {
             if(i === store.filter) {
-                // if(i === 0) {
-                //     filteredHtml += `<option value="0" selected>No Rating</option>`;
-                // } else {
                     filteredHtml += `<option value="${i}" selected>${i}+ Stars</option>`;
-                // }
                 
             } else {
-                // if(i === 0) {
-                //     filteredHtml += `<option value="0">No Rating</option>`;
-                // } else {
                     filteredHtml += `<option value="${i}">${i}+ Stars</option>`;
-                // }
-                
             }
         }
 
@@ -184,7 +175,6 @@ function generateCreateOrEditBookmark(bookmark) {
         } else {
             descriptionString = bookmark.desc;
         }
-         
     } 
 
     // Create rating HTML with loop. Iterate until i = rating, in which case, add checked value for pre-selection.
@@ -226,7 +216,6 @@ function generateCreateOrEditBookmark(bookmark) {
             <section class="js-error-message hidden" role="errorhandler">ERROR: ${store.errorMessage} </section>
         </form>
     </div>
-    
     `;
 
     return createStructure;
