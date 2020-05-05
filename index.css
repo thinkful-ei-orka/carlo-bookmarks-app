@@ -294,19 +294,22 @@ textarea {
 }
 
 .js-error-message {
-    position: fixed;
+    /* position: fixed; */
     text-align: center;
-    /* right: 10px; */
+    /* right: 10px;
     left: 50%;
     transform: translate(-50%, 0);
-    top: 5%;
+    top: 5%; */
     width: 250px;
     border: 1px solid black;
     background-color: rgb(197, 7, 7);
     color: white;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     padding: 4px;
-    font-size: small;
+    font-size: medium;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .js-edit-button {

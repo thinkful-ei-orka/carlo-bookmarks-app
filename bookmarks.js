@@ -146,7 +146,9 @@ function generateMainPage(bookmark) {
             <ul class="lower-container" role="tablist">
                 ${bookmarkStructure}
             </ul>
-        </section>`
+        </section>
+        <section class="js-error-message hidden" role="errorhandler">ERROR: ${store.errorMessage} </section>
+        `;
 
 
     return mainStructure;
@@ -214,16 +216,17 @@ function generateCreateOrEditBookmark(bookmark) {
                     <div class="add-inner-rating" role="rating entry">
                         ${ratingHtmlString} 
                     </div>
-                    <textarea role="description entry" name="desc" class="js-add-inner-description" placeholder="Add a description (optional)">${descriptionString}</textarea>
+                    <textarea role="description entry" name="desc" class="js-add-inner-description" placeholder="Add a description" required>${descriptionString}</textarea>
                 </div>
             </section>
-            <div class="js-error-message hidden">ERROR: ${store.errorMessage} </div>
-            <div class="add-button-container">
+            <section class="add-button-container">
                 <button class="cancel-button">Cancel</button>
                 ${buttonString}
-            </div>
+            </section>
+            <section class="js-error-message hidden" role="errorhandler">ERROR: ${store.errorMessage} </section>
         </form>
     </div>
+    
     `;
 
     return createStructure;
@@ -370,28 +373,26 @@ function handleCreateButtonClicked() {
         } else {
             api.createItem(itemTitle, itemUrl, itemDescription, itemRating)
                 .then(res => {
-                    if (res.ok) { 
-                        return res.json();
+                    if (!res.ok) { 
+                        // Regular Expression for https://
+                        let regexp = /^https:\/\//;
+
+                        // If itemTitle or itemUrl are empty, 
+                        // Else if itemUrl is not valid,
+                        // show specified errors.
+                        if(itemTitle === "" || itemUrl === "") {
+                            store.errorMessage = "Title and URL are required fields.";
+                        } else if(!regexp.test(itemUrl)) {
+                            store.errorMessage = "URL Must begin with 'https://'";
+                        } else {
+                            store.errorMessage = res.statusText;
+                        }
+
+                        // Set error state to on value, re-render, and throw error message.
+                        throw new Error(store.errorMessage);
                     }
 
-                    // Regular Expression for https://
-                    let regexp = /^https:\/\//;
-
-                    // If itemTitle or itemUrl are empty, 
-                    // Else if itemUrl is not valid,
-                    // show specified errors.
-                    if(itemTitle === "" || itemUrl === "") {
-                        store.errorMessage = "Title and URL are required fields.";
-                    } else if(!regexp.test(itemUrl)) {
-                        store.errorMessage = "URL Must begin with 'https://'";
-                    } else {
-                        store.errorMessage = res.statusText;
-                    }
-                    
-                    // Set error state to on value, re-render, and throw error message.
-                    store.error = 1;
-                    renderPage();
-                    throw new Error(store.errorMessage);
+                    return res.json();
                 })
                 .then((response) => {
                     // If response is ok, 
@@ -403,7 +404,11 @@ function handleCreateButtonClicked() {
                     store.addBookmark(response);
                     renderPage();
 
-                }).catch(err => console.error(err));
+                }).catch(err => {
+                    console.log(err.message);
+                    store.error = 1;
+                    renderPage();
+                });
             }
         });
 
@@ -417,13 +422,11 @@ function handleDeleteButtonClicked() {
         api.deleteItem(id) 
             .then(res => {
                 // Error handling
-                if (res.ok) { 
-                    return res.json();
+                if (!res.ok) { 
+                    store.errorMessage = res.statusText;
+                    throw new Error(store.errorMessage);
                 }
-                store.errorMessage = res.statusText;
-                store.error = 1;
-                renderPage();
-                throw new Error(store.errorMessage);
+                return res.json();
             })
             .then(() => {
                 // If response is ok, 
@@ -431,7 +434,11 @@ function handleDeleteButtonClicked() {
                 store.error = 0;
                 store.findAndDelete(id);
                 renderPage();
-            }).catch(err => console.error(err.message));
+            }).catch(err => {
+                console.error(err.message);
+                store.error = 1;
+                renderPage();
+            });
     });
 }
 
@@ -462,6 +469,7 @@ function handleEditButtonSubmit() {
         const itemUrl = $('.js-add-input').val();
         const itemTitle = $('.js-add-inner-title').val();
         const id = store.tempId;
+        let regexp = /^https:\/\//;  // Regular Expression for https://
 
         // Add them to an object.
         const bookmarkObject = {
@@ -470,36 +478,38 @@ function handleEditButtonSubmit() {
             'desc': itemDescription,
             'rating': itemRating
         };
-
+        console.log(bookmarkObject);
         // Handle PATCH to update item.
         if(itemRating === undefined) {
             store.errorMessage = "Must select a rating.";
             store.error = 1;
             renderPage();
+        } else if(itemTitle === "" || itemUrl === "") {
+            store.errorMessage = "Title and URL are required fields.";
+            store.error = 1;
+            renderPage();
+        } else if(!regexp.test(itemUrl)) {
+            store.errorMessage = "URL Must begin with 'https://";
+            store.error = 1;
+            renderPage();
         } else {
             api.updateItem(id, bookmarkObject)
             .then(res => {
-                if (res.ok) { 
-                    return res.json();
+                if (!res.ok) { 
+                    // If itemTitle or itemUrl are empty, 
+                    // Else if itemUrl is not valid,
+                    // show specified errors.
+                    if(itemTitle === "" || itemUrl === "") {
+                        store.errorMessage = "Title and URL are required fields.";
+                    } else if(!regexp.test(itemUrl)) {
+                        store.errorMessage = "URL Must begin with 'https://";
+                    } else {
+                        store.errorMessage = res.statusText;
+                    }
+
+                    throw new Error(store.errorMessage);
                 }
-
-                // Regular Expression for https://
-                let regexp = /^https:\/\//;
-
-                // If itemTitle or itemUrl are empty, 
-                // Else if itemUrl is not valid,
-                // show specified errors.
-                if(itemTitle === "" || itemUrl === "") {
-                    store.errorMessage = "Title and URL are required fields.";
-                } else if(!regexp.test(itemUrl)) {
-                    store.errorMessage = "URL Must begin with 'https://";
-                } else {
-                    store.errorMessage = res.statusText;
-                }
-
-                store.error = 1;
-                renderPage();
-                throw new Error(store.errorMessage);
+                return res.json();
             })
             .then((response) => {
                 //Find and Update the bookmark with new values in store
@@ -514,8 +524,9 @@ function handleEditButtonSubmit() {
                 renderPage();
 
             }).catch(err =>  {
-                
-                console.error(err)
+                console.error(err.message);
+                store.error = 1;
+                renderPage();
             });
         }
     });

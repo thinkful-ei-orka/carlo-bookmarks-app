@@ -11,17 +11,17 @@ const main = function () {
             return res.json();
         }
         store.errorMessage = res.statusText;
-        store.error = 1;
-        bookmarks.renderPage();
         throw new Error(store.errorMessage);
     })
     .then((items) => {
         store.error = 0;
         items.forEach((item) => store.addBookmark(item));
-        console.log(store.bookmarks)
-        
         bookmarks.renderPage();
-    }).catch(err => console.error(err));
+    }).catch(err => {
+      console.error(err);
+      store.error = 1;
+      bookmarks.renderPage();
+    });
 
   bookmarks.bindEventListeners();
 };
