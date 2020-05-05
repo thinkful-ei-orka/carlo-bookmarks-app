@@ -364,19 +364,10 @@ function handleCreateButtonClicked() {
         let itemDescription = $('.js-add-inner-description').val();
         const itemUrl = $('.js-add-input').val();
         const itemTitle = $('.js-add-inner-title').val();
-        let regexp = /^https:\/\//;  // Regular Expression for https://
 
         // Handle post to bookmarks API
         if(itemRating === undefined) {
             store.errorMessage = "Must select a rating.";
-            store.error = 1;
-            renderPage();
-        } else if(itemTitle === "" || itemUrl === "") {
-            store.errorMessage = "Title and URL are required fields.";
-            store.error = 1;
-            renderPage();
-        } else if(!regexp.test(itemUrl)) {
-            store.errorMessage = "URL Must begin with 'https://";
             store.error = 1;
             renderPage();
         } else {
@@ -416,6 +407,7 @@ function handleDeleteButtonClicked() {
                 renderPage();
             }).catch(err => {
                 console.error(err.message);
+                store.errorMessage = err.message;
                 store.error = 1;
                 renderPage();
             });
@@ -458,14 +450,10 @@ function handleEditButtonSubmit() {
             'desc': itemDescription,
             'rating': itemRating
         };
-        console.log(bookmarkObject);
+        
         // Handle PATCH to update item.
         if(itemRating === undefined) {
             store.errorMessage = "Must select a rating.";
-            store.error = 1;
-            renderPage();
-        } else if(itemTitle === "" || itemUrl === "") {
-            store.errorMessage = "Title and URL are required fields.";
             store.error = 1;
             renderPage();
         } else if(!regexp.test(itemUrl)) {
