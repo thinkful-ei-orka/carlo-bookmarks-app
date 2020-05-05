@@ -18,6 +18,11 @@ h1 {
     min-width: 300px;
 }
 
+ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
 /*   
 -------------------
 Main View Styles
@@ -276,10 +281,12 @@ textarea {
 
 .cancel-button {
     width: 47%;
+    cursor: pointer;
 }
 
 .create-button {
     width: 47%;
+    cursor: pointer;
 }
 
 .hidden {

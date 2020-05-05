@@ -100,8 +100,8 @@ function generateMainPage(bookmark) {
         // If so, add expanded HTML to the final bookmark structure
         if(item.expanded) {
             bookmarkStructure += `
-            <section class="combo-container">
-                <div class="bookmark-container" tabindex="0">
+            <li class="combo-container">
+                <div class="bookmark-container" tabindex="0" role="tab">
                     <div class="title-box">${item.title}</div>
                     <div class="star-box">${ratingHtml}</div>
                 </div>
@@ -119,36 +119,33 @@ function generateMainPage(bookmark) {
                         ${description}
                     </div>
                 </div>
-            </section>
+            </li>
             `;
         } else {
             bookmarkStructure += `
-            <section class="combo-container">
-                <div class="bookmark-container" tabindex="0">
+            <li class="combo-container">
+                <div class="bookmark-container" tabindex="0" role="tab">
                     <div class="title-box">${item.title}</div>
                     <div class="star-box">${ratingHtml}</div>
                 </div>
                 <div class="info-container" data-item-id="${item.id}">
                 </div>
-            </section>
+            </li>
             `;
         }
-
-
-
     });
 
     // Default structure on main page 
     // Adding resulting bookmark structure from filter/expansion
     let mainStructure = `
         <section class="main-container">
-            <section class="upper-container">
+            <section class="upper-container" role="menu">
                 <button class="new-button">+ New</button>
                 ${filteredHtml}
             </section>
-            <section class="lower-container">
+            <ul class="lower-container" role="tablist">
                 ${bookmarkStructure}
-            </section>
+            </ul>
         </section>`
 
 
@@ -167,7 +164,7 @@ function generateCreateOrEditBookmark(bookmark) {
     let rating = -1; // Rating set to -1 for no pre-selected radio button
     let ratingHtmlString = ""; // Initializes rating HTML string
     let buttonString = `<button type="submit" class="create-button">Create</button>`; // Button HTML for Create button
-    let formString = '<form class="add-form">'; // Default to Create bookmark form. 
+    let formString = '<form class="add-form" role="form">'; // Default to Create bookmark form. 
 
     // If edit state is true, change strings to Edit Page values
     if(store.edit) {
@@ -177,7 +174,7 @@ function generateCreateOrEditBookmark(bookmark) {
         
         rating = bookmark.rating; // Sets up pre-selection of radio button
         buttonString = `<button type="submit" class="js-edit-button">Edit</button>`; // Change button HTML to Edit button
-        formString = '<form class="edit-form">'; // Change to Edit bookmark form
+        formString = '<form class="edit-form" role="form">'; // Change to Edit bookmark form
 
         // Sets value of description textbox to current description. Empty if value is null.
         if(bookmark.desc === null) {
@@ -205,21 +202,21 @@ function generateCreateOrEditBookmark(bookmark) {
     let createStructure = `
     <div class="main-container">
         ${formString}
-            <div class="add-upper-container">
+            <section class="add-upper-container" role="URL entry">
                     <label for="add-input">${headerString}</label>
                     <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com" ${urlString} required>
-            </div>
-            <div class="add-lower-container">
-            <div class="add-inner-top">
-                <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here" ${titleString} required>
-            </div>
-            <div class="add-inner-bottom">
-                <div class="add-inner-rating">
-                    ${ratingHtmlString} 
+            </section>
+            <section class="add-lower-container" role="lower controls">
+                <div class="add-inner-top" role="title entry">
+                    <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here" ${titleString} required>
                 </div>
-                <textarea name="desc" class="js-add-inner-description" placeholder="Add a description (optional)">${descriptionString}</textarea>
-            </div>
-            </div>
+                <div class="add-inner-bottom">
+                    <div class="add-inner-rating" role="rating entry">
+                        ${ratingHtmlString} 
+                    </div>
+                    <textarea role="description entry" name="desc" class="js-add-inner-description" placeholder="Add a description (optional)">${descriptionString}</textarea>
+                </div>
+            </section>
             <div class="js-error-message hidden">ERROR: ${store.errorMessage} </div>
             <div class="add-button-container">
                 <button class="cancel-button">Cancel</button>
@@ -516,7 +513,10 @@ function handleEditButtonSubmit() {
                 store.adding = false;
                 renderPage();
 
-            }).catch(err => console.error(err));
+            }).catch(err =>  {
+                
+                console.error(err)
+            });
         }
     });
 }
