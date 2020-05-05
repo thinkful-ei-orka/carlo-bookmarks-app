@@ -526,8 +526,6 @@ function handleFilterSelection() {
     $('main').on('change', '.js-filter-menu', event => {
         // Get filter value and set store filter variable to the rating selected
         const rating = $(".js-filter-menu option:selected").val();
-        // $(".js-filter-menu").val(rating);
-        console.log(rating);
         store.filter = Number(rating);
         renderPage();
     });
