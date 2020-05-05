@@ -11,6 +11,7 @@ const main = function () {
     }).catch(err => {
       console.error(err);
       store.error = 1;
+      store.errorMessage = err.message;
       bookmarks.renderPage();
     });
 

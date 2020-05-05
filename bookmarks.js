@@ -488,6 +488,7 @@ function handleEditButtonSubmit() {
 
             }).catch(err =>  {
                 console.error(err.message);
+                store.errorMessage = err.message;
                 store.error = 1;
                 renderPage();
             });
