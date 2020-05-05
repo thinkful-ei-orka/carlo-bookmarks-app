@@ -125,8 +125,8 @@ function generateMainPage(bookmark) {
             `;
         } else {
             bookmarkStructure += `
-            <section class="combo-container" tabindex="0">
-                <div class="bookmark-container">
+            <section class="combo-container">
+                <div class="bookmark-container" tabindex="0">
                     <div class="title-box">${item.title}</div>
                     <div class="star-box">${ratingHtml}</div>
                 </div>
@@ -303,22 +303,30 @@ function handleBookmarkClicked () {
 }
 
 // Expand bookmark on enter keypress
-// function handleBookmarkKeyPress () {
-//     $('main').keypress(event => {
-//         var keycode = (event.keyCode ? event.keyCode : event.which);
-//         const id = getInnerContainerId(event.currentTarget);
-//         console.log(`handleBookmarkKeyPress ran`);
-//         if(keycode == '13'){
+function handleBookmarkKeyPress () {
+    $('main').on('keypress', '.bookmark-container', event => {
+        // const id = getInnerContainerId(event.currentTarget);
+        // console.log(`handleBookmarkKeyDown ran`);
+
+        // // Find ID, toggle expanded property, and re-render page
+        // const item = store.findById(id);
+        // const itemObj = { expanded: !item.expanded };
+        // store.findAndUpdate(id, itemObj);
+        // renderPage();
+        var keycode = (event.keyCode ? event.keyCode : event.which);
+        const id = getInnerContainerId(event.currentTarget);
+        console.log(`handleBookmarkKeyPress ran`);
+        if(keycode == '13'){
 
     
-//             // Find ID, toggle expanded property, and re-render page
-//             const item = store.findById(id);
-//             const itemObj = { expanded: !item.expanded };
-//             store.findAndUpdate(id, itemObj);
-//             renderPage();
-//         }
-//     });
-// }
+            // Find ID, toggle expanded property, and re-render page
+            const item = store.findById(id);
+            const itemObj = { expanded: !item.expanded };
+            store.findAndUpdate(id, itemObj);
+            renderPage();
+        }
+    });
+}
 
 // Function handling New Bookmark button clicked
 function handleNewButtonClicked () {
@@ -486,7 +494,6 @@ function handleEditButtonSubmit() {
             } else {
                 store.errorMessage = res.statusText;
             }
-            
 
             store.error = 1;
             renderPage();
@@ -528,7 +535,7 @@ function bindEventListeners () {
     handleCreateButtonClicked();
     handleCancelButtonClicked();
     handleNewButtonClicked();
-    //handleBookmarkKeyPress();
+    handleBookmarkKeyPress();
     handleBookmarkClicked();
 }
 
