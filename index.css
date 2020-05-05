@@ -292,8 +292,8 @@ textarea {
     /* right: 10px; */
     left: 50%;
     transform: translate(-50%, 0);
-    top: 400px;
-    width: 150px;
+    top: 5%;
+    width: 250px;
     border: 1px solid black;
     background-color: rgb(197, 7, 7);
     color: white;
