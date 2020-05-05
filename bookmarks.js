@@ -464,7 +464,6 @@ function handleEditButtonSubmit() {
             api.updateItem(id, bookmarkObject)
             .then((response) => {
                 //Find and Update the bookmark with new values in store
-                console.log(response);
                 store.findAndUpdate(id, bookmarkObject);
 
                 // Reset global variables to default state and render page
