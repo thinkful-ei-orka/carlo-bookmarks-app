@@ -99,7 +99,7 @@ function generateMainPage(bookmark) {
                 <div class="info-container" data-item-id="${item.id}">
                     <div class="info-inner-top">
                         <div class="info-inner-url-container">
-                            <button onclick="window.location.href = '${item.url}';" class="info-url-button">Visit Site</button>
+                            <a href="${item.url}" target="_blank" class="info-url-button">Visit Site</a>
                         </div>
                         <div class="info-inner-controls">
                             <button class="info-edit-button">Edit</button>
@@ -130,7 +130,7 @@ function generateMainPage(bookmark) {
     // Adding resulting bookmark structure from filter/expansion
     let mainStructure = `
         <section class="main-container">
-            <section class="upper-container" role="menu">
+            <section class="upper-container">
                 <button class="new-button">+ New</button>
                 ${filteredHtml}
             </section>
@@ -138,7 +138,7 @@ function generateMainPage(bookmark) {
                 ${bookmarkStructure}
             </ul>
         </section>
-        <section class="js-error-message hidden" role="errorhandler">ERROR: ${store.errorMessage} </section>
+        <section class="js-error-message hidden">ERROR: ${store.errorMessage} </section>
         `;
 
 
@@ -187,33 +187,33 @@ function generateCreateOrEditBookmark(bookmark) {
         }
 
         ratingHtmlString += `<input type="radio" name="rating" class="js-add-rating" id="rating${i}" value="${i}" ${checked}>
-        <label class="star" for="rating${i}"> <p>${i}</p> </label>`
+        <label class="star" for="rating${i}"> ${i} </label>`
     }
 
     // Bring the structure together with all values from above.
     let createStructure = `
     <div class="main-container">
         ${formString}
-            <section class="add-upper-container" role="URL entry">
-                    <label for="add-input">${headerString}</label>
-                    <input type="text" name="url" class="js-add-input" placeholder="https://www.example.com" ${urlString} required>
+            <section class="add-upper-container">
+                    <label for="add-input-url">${headerString}</label>
+                    <input type="url" name="url" class="js-add-input" id="add-input-url" placeholder="https://www.example.com" ${urlString} required>
             </section>
-            <section class="add-lower-container" role="lower controls">
-                <div class="add-inner-top" role="title entry">
+            <section class="add-lower-container">
+                <div class="add-inner-top">
                     <input type="text" name="title" class="js-add-inner-title" placeholder="Title goes here" ${titleString} required>
                 </div>
                 <div class="add-inner-bottom">
-                    <div class="add-inner-rating" role="rating entry">
+                    <div class="add-inner-rating">
                         ${ratingHtmlString} 
                     </div>
-                    <textarea role="description entry" name="desc" class="js-add-inner-description" placeholder="Add a description" required>${descriptionString}</textarea>
+                    <textarea name="desc" class="js-add-inner-description" placeholder="Add a description" required>${descriptionString}</textarea>
                 </div>
             </section>
             <section class="add-button-container">
                 <button class="cancel-button">Cancel</button>
                 ${buttonString}
             </section>
-            <section class="js-error-message hidden" role="errorhandler">ERROR: ${store.errorMessage} </section>
+            <section class="js-error-message hidden">ERROR: ${store.errorMessage} </section>
         </form>
     </div>
     `;
