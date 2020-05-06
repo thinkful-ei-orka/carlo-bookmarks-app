@@ -157,7 +157,7 @@ function generateCreateOrEditBookmark(bookmark) {
     let rating = -1; // Rating set to -1 for no pre-selected radio button
     let ratingHtmlString = ""; // Initializes rating HTML string
     let buttonString = `<button type="submit" class="create-button">Create</button>`; // Button HTML for Create button
-    let formString = '<form class="add-form" role="form" aria-label="Add">'; // Default to Create bookmark form. 
+    let formString = '<form class="add-form" aria-label="Add">'; // Default to Create bookmark form. 
 
     // If edit state is true, change strings to Edit Page values
     if(store.edit) {
@@ -167,7 +167,7 @@ function generateCreateOrEditBookmark(bookmark) {
         
         rating = bookmark.rating; // Sets up pre-selection of radio button
         buttonString = `<button type="submit" class="js-edit-button">Edit</button>`; // Change button HTML to Edit button
-        formString = `<form class="edit-form" role="form" aria-label="Edit">`; // Change to Edit bookmark form
+        formString = `<form class="edit-form" aria-label="Edit">`; // Change to Edit bookmark form
 
         // Sets value of description textbox to current description. Empty if value is null.
         if(bookmark.desc === null) {
